@@ -152,13 +152,13 @@ export default async function InicioPage() {
 
       <section aria-labelledby="ultimos-titulo" className="space-y-3">
         <h2 id="ultimos-titulo" className="text-xl font-semibold text-slate-900">
-          Últimos registros
+          Últimos registros de glucosa
         </h2>
 
         {registros.length === 0 ? (
           // §18.2 — estados vacíos educativos.
           <div className="rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 text-center">
-            <p className="text-lg text-slate-700">Aún no has registrado ninguna medición.</p>
+            <p className="text-lg text-slate-700">Aún no has registrado tu glucosa.</p>
             <p className="mt-2 text-base text-slate-600">
               Tu primer registro toma menos de un minuto.
             </p>

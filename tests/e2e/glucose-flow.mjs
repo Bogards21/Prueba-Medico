@@ -36,7 +36,7 @@ await signUp(page, BASE);
 await page.goto(BASE, { waitUntil: 'networkidle' });
 check(
   'dashboard muestra estado vacío educativo',
-  await page.getByText('Aún no has registrado ninguna medición').isVisible(),
+  await page.getByText('Aún no has registrado tu glucosa').isVisible(),
 );
 // Acotado a la sección de glucosa: el dashboard tiene más tarjetas (peso,
 // presión) que también muestran "Sin datos" cuando están vacías.
