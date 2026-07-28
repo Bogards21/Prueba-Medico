@@ -29,15 +29,19 @@ MVP en construcción. Fase 1 (rebanada vertical) en curso.
 | `src/domain/consent.ts` | RF-02, CA-02, CA-08 | Consentimientos versionados; los opcionales nunca vienen premarcados |
 | `src/domain/password.ts` | RF-01 | Política de contraseñas y bloqueo temporal con tope |
 | `src/lib/session-token.ts` | RF-01 | Sesión firmada con HMAC y expiración dentro de la firma |
+| `src/domain/profile.ts` | RF-03 | Perfil personal y clínico; coherencia entre nacimiento, edad y diagnóstico |
+| `src/domain/weight.ts` | RF-05 | Peso, conversión kg/lb y cambio respecto a la medición anterior |
+| `src/domain/blood-pressure.ts` | RF-06 | Presión arterial; sistólica > diastólica y confirmación de cifras atípicas |
 
 Pantallas: alta de cuenta con verificación de correo, inicio y cierre de
-sesión, onboarding de consentimientos, dashboard y registro de glucosa.
+sesión, onboarding de consentimientos y perfil, edición de perfil, dashboard
+y registro de glucosa, peso y presión arterial.
 
 ### Pendiente
 
-Perfil clínico (RF-03), medicamentos y recordatorios (RF-08/RF-09), contenido
-educativo (RF-12), metas (RF-14), reportes PDF (RF-15), panel administrativo
-(RF-16) y suscripciones (RF-17).
+Actividad física (RF-07), medicamentos y recordatorios (RF-08/RF-09),
+contenido educativo (RF-12), metas (RF-14), reportes PDF (RF-15), panel
+administrativo (RF-16) y suscripciones (RF-17).
 
 ## Arquitectura
 
@@ -70,8 +74,9 @@ npm run build
 Pruebas de navegador, con el servidor levantado en otra terminal:
 
 ```bash
-npm run test:e2e:auth   # alta, verificación, consentimientos, sesión
-npm run test:e2e        # registro de glucosa y dashboard
+npm run test:e2e:auth        # alta, verificación, consentimientos, sesión
+npm run test:e2e             # registro de glucosa y dashboard
+npm run test:e2e:mediciones  # perfil, peso y presión arterial
 ```
 
 Cada corrida crea su propia cuenta, así que no hace falta vaciar la base. Para

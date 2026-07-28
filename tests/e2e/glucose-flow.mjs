@@ -38,7 +38,13 @@ check(
   'dashboard muestra estado vacío educativo',
   await page.getByText('Aún no has registrado ninguna medición').isVisible(),
 );
-check('RB-09: sin datos NO muestra 0', (await page.getByText('Sin datos').count()) === 3);
+// Acotado a la sección de glucosa: el dashboard tiene más tarjetas (peso,
+// presión) que también muestran "Sin datos" cuando están vacías.
+const seccionGlucosa = page.locator('section[aria-labelledby="resumen-titulo"]');
+check(
+  'RB-09: sin datos NO muestra 0',
+  (await seccionGlucosa.getByText('Sin datos').count()) === 3,
+);
 await captura('01-dashboard-vacio');
 
 // 2. Registro normal (CA-03).
@@ -80,7 +86,10 @@ await page.goto(BASE, { waitUntil: 'networkidle' });
 const cuerpo = await page.textContent('body');
 check('el dashboard lista los registros guardados', cuerpo.includes('112'));
 check('RB-11: muestra el origen del dato', cuerpo.includes('Registro manual'));
-check('ya no muestra "Sin datos"', !cuerpo.includes('Sin datos'));
+check(
+  'con datos, la sección de glucosa ya no dice "Sin datos"',
+  (await seccionGlucosa.getByText('Sin datos').count()) === 0,
+);
 check('RB-01: el límite clínico está visible', cuerpo.includes('No sustituye una consulta'));
 await captura('04-dashboard-con-datos');
 

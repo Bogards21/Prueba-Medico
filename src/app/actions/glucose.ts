@@ -88,6 +88,6 @@ export async function listGlucose(limit = 50) {
     .select()
     .from(glucoseRecords)
     .where(and(eq(glucoseRecords.userId, userId), isNull(glucoseRecords.deletedAt)))
-    .orderBy(desc(glucoseRecords.measuredAt))
+    .orderBy(desc(glucoseRecords.measuredAt), desc(glucoseRecords.createdAt))
     .limit(limit);
 }

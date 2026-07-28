@@ -85,8 +85,20 @@ for (const nombre of ['Términos de uso', 'Aviso de privacidad', 'Tratamiento de
   await page.getByText(nombre, { exact: false }).first().click();
 }
 await page.getByRole('button', { name: 'Aceptar y continuar' }).click();
+await page.waitForURL(/\/onboarding\/perfil/, { timeout: 20000 });
+check('CA-02: tras los consentimientos pide los campos requeridos del perfil', true);
+
+// RF-03 — el perfil también valida.
+await page.fill('#firstName', 'Carlos');
+await page.fill('#birthDate', '2015-01-01');
+await page.getByRole('button', { name: 'Continuar' }).click();
+await page.waitForSelector('text=/personas adultas/', { timeout: 20000 });
+check('§8.1: rechaza a una persona menor de edad', true);
+
+await page.fill('#birthDate', '1968-03-12');
+await page.getByRole('button', { name: 'Continuar' }).click();
 await page.waitForURL((u) => !u.pathname.includes('onboarding'), { timeout: 20000 });
-check('CA-02: con los obligatorios aceptados entra al dashboard', new URL(page.url()).pathname === '/');
+check('CA-02: con consentimientos y perfil entra al dashboard', new URL(page.url()).pathname === '/');
 
 // 5. La sesión se puede cerrar y reabrir.
 await page.getByRole('button', { name: 'Salir' }).click();

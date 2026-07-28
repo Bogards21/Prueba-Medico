@@ -27,9 +27,9 @@ type Estado =
   | { tipo: 'confirmar'; motivo: string }
   | { tipo: 'guardado'; alertas: RuleEvaluation[] };
 
-export function GlucoseForm() {
+export function GlucoseForm({ unidadPreferida }: { unidadPreferida: GlucoseUnit }) {
   const [value, setValue] = useState('');
-  const [unit, setUnit] = useState<GlucoseUnit>('mg/dL');
+  const [unit, setUnit] = useState<GlucoseUnit>(unidadPreferida);
   const [context, setContext] = useState<GlucoseContext>('fasting');
   const [measuredAt, setMeasuredAt] = useState(ahoraLocal);
   const [note, setNote] = useState('');

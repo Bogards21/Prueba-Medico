@@ -3,7 +3,7 @@ import 'server-only';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { getDb } from '@/db/client';
-import { users, consents } from '@/db/schema';
+import { users, consents, profiles } from '@/db/schema';
 import { getSessionUserId } from './session';
 import { pendingRequired } from '@/domain/consent';
 import type { ConsentRecord } from '@/domain/consent';
@@ -18,6 +18,12 @@ export async function getConsentRecords(userId: string): Promise<ConsentRecord[]
     accepted: f.accepted,
     revokedAt: f.revokedAt,
   }));
+}
+
+async function tienePerfil(userId: string): Promise<boolean> {
+  const db = await getDb();
+  const [fila] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1);
+  return Boolean(fila?.firstName && fila.birthDate);
 }
 
 /**
@@ -35,7 +41,7 @@ export async function requireUserId(): Promise<string> {
   const db = await getDb();
   const encontrado = await db.select().from(users).where(eq(users.id, userId)).limit(1);
 
-  // Sesión válida pero cuenta inexistente, suspendida o en baja.
+  // Sesión válida pero cuenta inexistente o suspendida.
   if (encontrado.length === 0 || encontrado[0].status === 'suspended') {
     redirect('/entrar');
   }
@@ -44,10 +50,14 @@ export async function requireUserId(): Promise<string> {
     redirect('/onboarding/consentimientos');
   }
 
+  if (!(await tienePerfil(userId))) {
+    redirect('/onboarding/perfil');
+  }
+
   return userId;
 }
 
-/** Igual que `requireUserId` pero sin exigir consentimientos, para el propio onboarding. */
+/** Igual que `requireUserId` pero sin exigir onboarding, para el propio onboarding. */
 export async function requireUserIdRaw(): Promise<string> {
   const userId = await getSessionUserId();
   if (!userId) redirect('/entrar');

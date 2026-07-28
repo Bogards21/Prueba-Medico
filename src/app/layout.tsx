@@ -15,7 +15,8 @@ export const metadata: Metadata = {
 // Reportes, Perfil) se añaden conforme avanzan las fases del plan.
 const NAV = [
   { href: '/', label: 'Inicio' },
-  { href: '/registrar/glucosa', label: 'Registrar' },
+  { href: '/registrar', label: 'Registrar' },
+  { href: '/perfil', label: 'Perfil' },
 ];
 
 const NAV_INVITADO = [

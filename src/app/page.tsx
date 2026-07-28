@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { listGlucose } from './actions/glucose';
+import { listWeight, listBloodPressure } from './actions/measurements';
 import { summarize } from '@/domain/trends';
 import { GLUCOSE_CONTEXT_LABELS, toMgDl } from '@/domain/glucose';
 import type { GlucoseContext, GlucoseUnit } from '@/domain/glucose';
+import { weightDelta } from '@/domain/weight';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,10 +31,22 @@ function Cifra({ valor, sufijo }: { valor: number | null; sufijo?: string }) {
 }
 
 export default async function InicioPage() {
-  const registros = await listGlucose();
+  const [registros, pesos, presiones] = await Promise.all([
+    listGlucose(),
+    listWeight(),
+    listBloodPressure(),
+  ]);
 
   const to = new Date();
   const from = new Date(to.getTime() - (DIAS - 1) * 86_400_000);
+
+  const ultimoPeso = pesos[0] ?? null;
+  const anteriorPeso = pesos[1] ?? null;
+  const cambioPeso =
+    ultimoPeso && anteriorPeso
+      ? weightDelta(Number(ultimoPeso.value), Number(anteriorPeso.value))
+      : null;
+  const ultimaPresion = presiones[0] ?? null;
 
   const resumen = summarize(
     registros.map((r) => ({
@@ -52,10 +66,10 @@ export default async function InicioPage() {
       </div>
 
       <Link
-        href="/registrar/glucosa"
+        href="/registrar"
         className="block rounded-xl bg-teal-800 px-6 py-5 text-center text-xl font-semibold text-white hover:bg-teal-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-900"
       >
-        Registrar glucosa
+        Registrar una medición
       </Link>
 
       <section aria-labelledby="resumen-titulo" className="space-y-3">
@@ -93,6 +107,47 @@ export default async function InicioPage() {
               : `Hay ${resumen.daysWithoutData} días sin registro en este periodo.`}
           </p>
         )}
+      </section>
+
+      <section aria-labelledby="otras-titulo" className="space-y-3">
+        <h2 id="otras-titulo" className="text-xl font-semibold text-slate-900">
+          Peso y presión
+        </h2>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-slate-200 bg-white p-4">
+            <p className="text-base text-slate-600">Último peso</p>
+            {ultimoPeso ? (
+              <>
+                <p className="mt-1 text-3xl font-semibold tabular-nums text-slate-900">
+                  {Number(ultimoPeso.value)}
+                  <span className="ml-1 text-lg font-normal text-slate-600">{ultimoPeso.unit}</span>
+                </p>
+                {/* RF-05 — cambio respecto a la medición anterior; null si no hay con qué comparar. */}
+                {cambioPeso !== null && (
+                  <p className="mt-1 text-base text-slate-600">
+                    {cambioPeso > 0 ? '+' : ''}
+                    {cambioPeso.toFixed(1)} {ultimoPeso.unit} desde la anterior
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="mt-1 text-2xl font-medium text-slate-400">Sin datos</p>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-white p-4">
+            <p className="text-base text-slate-600">Última presión</p>
+            {ultimaPresion ? (
+              <p className="mt-1 text-3xl font-semibold tabular-nums text-slate-900">
+                {ultimaPresion.systolic}/{ultimaPresion.diastolic}
+                <span className="ml-1 text-lg font-normal text-slate-600">mmHg</span>
+              </p>
+            ) : (
+              <p className="mt-1 text-2xl font-medium text-slate-400">Sin datos</p>
+            )}
+          </div>
+        </div>
       </section>
 
       <section aria-labelledby="ultimos-titulo" className="space-y-3">

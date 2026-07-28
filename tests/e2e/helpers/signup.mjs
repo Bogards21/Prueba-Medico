@@ -22,6 +22,12 @@ export async function signUp(page, base) {
     await page.getByText(nombre, { exact: false }).first().click();
   }
   await page.getByRole('button', { name: 'Aceptar y continuar' }).click();
+  await page.waitForURL(/\/onboarding\/perfil/, { timeout: 20000 });
+
+  // RF-03 — los campos requeridos del perfil también forman parte de CA-02.
+  await page.fill('#firstName', 'Carlos');
+  await page.fill('#birthDate', '1968-03-12');
+  await page.getByRole('button', { name: 'Continuar' }).click();
   await page.waitForURL((u) => !u.pathname.includes('onboarding'), { timeout: 20000 });
 
   return { correo, clave };
