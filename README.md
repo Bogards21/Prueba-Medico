@@ -26,12 +26,18 @@ MVP en construcción. Fase 1 (rebanada vertical) en curso.
 | `src/domain/glucose.ts` | RF-04, CA-04 | Validación, conversión de unidades y confirmación de valores inusuales |
 | `src/domain/rules/` | RF-13, CA-05 | Motor determinístico; solo evalúa reglas aprobadas y versionadas |
 | `src/domain/trends.ts` | RF-11, RB-09 | Agregación con huecos explícitos; nunca presenta ausencia como cero |
+| `src/domain/consent.ts` | RF-02, CA-02, CA-08 | Consentimientos versionados; los opcionales nunca vienen premarcados |
+| `src/domain/password.ts` | RF-01 | Política de contraseñas y bloqueo temporal con tope |
+| `src/lib/session-token.ts` | RF-01 | Sesión firmada con HMAC y expiración dentro de la firma |
+
+Pantallas: alta de cuenta con verificación de correo, inicio y cierre de
+sesión, onboarding de consentimientos, dashboard y registro de glucosa.
 
 ### Pendiente
 
-Esquema de datos (§16), autenticación y consentimientos (RF-01/RF-02), UI,
-medicamentos y recordatorios (RF-08/RF-09), contenido educativo (RF-12),
-reportes PDF (RF-15), panel administrativo (RF-16) y suscripciones (RF-17).
+Perfil clínico (RF-03), medicamentos y recordatorios (RF-08/RF-09), contenido
+educativo (RF-12), metas (RF-14), reportes PDF (RF-15), panel administrativo
+(RF-16) y suscripciones (RF-17).
 
 ## Arquitectura
 
@@ -54,11 +60,30 @@ Postgres · Vitest
 
 ```bash
 npm install
-npm test          # Vitest
-npm run typecheck # tsc --noEmit
-npm run dev       # servidor de desarrollo
+cp .env.example .env.local   # revisa SESSION_SECRET antes de producción
+npm test                     # unitarios e integración (Vitest)
+npm run typecheck            # tsc --noEmit
+npm run dev                  # servidor de desarrollo
 npm run build
 ```
+
+Pruebas de navegador, con el servidor levantado en otra terminal:
+
+```bash
+npm run test:e2e:auth   # alta, verificación, consentimientos, sesión
+npm run test:e2e        # registro de glucosa y dashboard
+```
+
+Cada corrida crea su propia cuenta, así que no hace falta vaciar la base. Para
+empezar de cero: detén el servidor, `rm -rf .pgdata` y vuelve a levantarlo.
+
+### Configuración
+
+`DATABASE_URL` apunta a cualquier Postgres. Si no está definida, en desarrollo
+se usa PGlite persistido en `.pgdata/`, con las mismas migraciones.
+
+`SESSION_SECRET` firma las cookies de sesión y es **obligatoria en
+producción**: sin ella el servidor se niega a crear sesiones.
 
 ## Frontera clínica en el código
 

@@ -1,9 +1,9 @@
 /**
  * Verificación end-to-end del flujo de registro de glucosa (§12.2 del PRD).
  *
- * Requiere el servidor corriendo y una base de desarrollo vacía:
+ * Crea su propia cuenta, así que no necesita una base vacía.
  *
- *   rm -rf .pgdata && npm run dev      # en otra terminal
+ *   npm run dev      # en otra terminal
  *   npm run test:e2e
  *
  * Si Chromium no está en la ruta por defecto de Playwright, indícala con
@@ -11,6 +11,7 @@
  */
 
 import { chromium } from 'playwright';
+import { signUp } from './helpers/signup.mjs';
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:3000';
 const OUT = process.env.SCREENSHOT_DIR ?? null;
@@ -27,21 +28,12 @@ const check = (nombre, cond) => {
 };
 const captura = (n) => (OUT ? page.screenshot({ path: `${OUT}/${n}.png`, fullPage: true }) : null);
 
+// Cuenta nueva por corrida: el estado vacío queda garantizado sin depender
+// de que la base de desarrollo esté limpia.
+await signUp(page, BASE);
+
 // 1. Estado vacío (§18.2 "estados vacíos educativos", RB-09).
 await page.goto(BASE, { waitUntil: 'networkidle' });
-
-// Las aserciones de estado vacío solo tienen sentido sobre una base limpia.
-// Si hay datos previos, decirlo en claro en vez de reportar fallos engañosos.
-if (!(await page.getByText('Aún no has registrado ninguna medición').isVisible())) {
-  console.error(
-    'La base de desarrollo ya tiene registros.\n' +
-      'Detén el servidor, borra .pgdata, vuelve a levantarlo y repite:\n' +
-      '  rm -rf .pgdata && npm run dev',
-  );
-  await browser.close();
-  process.exit(2);
-}
-
 check(
   'dashboard muestra estado vacío educativo',
   await page.getByText('Aún no has registrado ninguna medición').isVisible(),

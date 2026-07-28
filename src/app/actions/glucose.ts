@@ -3,31 +3,13 @@
 import { revalidatePath } from 'next/cache';
 import { desc, eq, isNull, and } from 'drizzle-orm';
 import { getDb } from '@/db/client';
-import { glucoseRecords, users, auditLogs } from '@/db/schema';
+import { glucoseRecords, auditLogs } from '@/db/schema';
 import { validateGlucose, toMgDl } from '@/domain/glucose';
 import type { GlucoseContext, GlucoseUnit } from '@/domain/glucose';
 import { evaluateRules } from '@/domain/rules/engine';
 import type { RuleEvaluation } from '@/domain/rules/types';
 import { getActiveApprovedRules } from '@/db/rules';
-
-/**
- * NOTA: mientras RF-01 (autenticación) no esté implementado, estas acciones
- * operan sobre una cuenta de demostración fija. Sustituir por la sesión real
- * en la Tarea 6 del plan. No desplegar así.
- */
-const DEMO_EMAIL = 'demo@ejemplo.mx';
-
-async function getDemoUserId(): Promise<string> {
-  const db = await getDb();
-  const found = await db.select().from(users).where(eq(users.email, DEMO_EMAIL)).limit(1);
-  if (found.length > 0) return found[0].id;
-
-  const [created] = await db
-    .insert(users)
-    .values({ email: DEMO_EMAIL, passwordHash: 'demo-no-usar', status: 'active' })
-    .returning();
-  return created.id;
-}
+import { requireUserId } from '@/lib/current-user';
 
 export interface SaveGlucoseInput {
   value: number;
@@ -64,7 +46,7 @@ export async function saveGlucose(input: SaveGlucoseInput): Promise<SaveGlucoseR
   }
 
   const db = await getDb();
-  const userId = await getDemoUserId();
+  const userId = await requireUserId();
 
   const [record] = await db
     .insert(glucoseRecords)
@@ -100,7 +82,7 @@ export async function saveGlucose(input: SaveGlucoseInput): Promise<SaveGlucoseR
 
 export async function listGlucose(limit = 50) {
   const db = await getDb();
-  const userId = await getDemoUserId();
+  const userId = await requireUserId();
 
   return db
     .select()

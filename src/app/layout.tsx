@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { getSessionUserId } from '@/lib/session';
+import { logout } from './actions/auth';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -16,7 +18,14 @@ const NAV = [
   { href: '/registrar/glucosa', label: 'Registrar' },
 ];
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const NAV_INVITADO = [
+  { href: '/entrar', label: 'Entrar' },
+  { href: '/registro', label: 'Crear cuenta' },
+];
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const conSesion = (await getSessionUserId()) !== null;
+
   return (
     <html lang="es-MX">
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
@@ -33,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             aria-label="Navegación principal"
             className="mx-auto flex max-w-3xl flex-wrap items-center gap-x-1 gap-y-2 px-4 py-3"
           >
-            {NAV.map((item) => (
+            {(conSesion ? NAV : NAV_INVITADO).map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -42,6 +51,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {item.label}
               </Link>
             ))}
+
+            {conSesion && (
+              <form action={logout} className="ml-auto">
+                <button
+                  type="submit"
+                  className="rounded-lg px-4 py-3 text-base font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700"
+                >
+                  Salir
+                </button>
+              </form>
+            )}
           </nav>
         </header>
 

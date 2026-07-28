@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
    * Solo afecta al desarrollo local: en producción se usa `DATABASE_URL`
    * con postgres-js y PGlite ni siquiera se importa.
    */
-  serverExternalPackages: ['@electric-sql/pglite'],
+  serverExternalPackages: ['@electric-sql/pglite', '@node-rs/argon2'],
 };
 
 export default nextConfig;

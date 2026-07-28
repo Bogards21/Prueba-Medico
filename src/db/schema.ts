@@ -151,6 +151,11 @@ export const users = pgTable(
     role: userRole('role').notNull().default('patient'),
     status: userStatus('status').notNull().default('pending_verification'),
     emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
+    /** CA-01 — token de confirmación de correo. Se borra al verificar. */
+    emailVerificationToken: text('email_verification_token'),
+    emailVerificationExpiresAt: timestamp('email_verification_expires_at', {
+      withTimezone: true,
+    }),
     failedLoginAttempts: integer('failed_login_attempts').notNull().default(0),
     lockedUntil: timestamp('locked_until', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
