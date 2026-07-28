@@ -12,12 +12,13 @@ export const metadata: Metadata = {
 
 /**
  * §18.3 — navegación principal del PRD. Solo las rutas ya implementadas;
- * faltan Tendencias, Aprender y Reportes.
+ * faltan Tendencias y Aprender.
  */
 const NAV = [
   { href: '/', label: 'Inicio' },
   { href: '/registrar', label: 'Registrar' },
   { href: '/medicamentos', label: 'Medicamentos' },
+  { href: '/reportes', label: 'Reportes' },
   { href: '/perfil', label: 'Perfil' },
 ];
 

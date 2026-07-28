@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual, randomBytes } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 
 /**
  * Firma y verificación del token de sesión — RF-01.
@@ -14,7 +14,21 @@ import { createHmac, timingSafeEqual, randomBytes } from 'node:crypto';
 
 export const SESSION_MAX_AGE_S = 60 * 60 * 8; // 8 horas
 
-let devSecret: string | null = null;
+/**
+ * Secreto de respaldo para desarrollo. Es una CONSTANTE, y eso es
+ * deliberado: el servidor de desarrollo de Next atiende las acciones de
+ * servidor y los route handlers desde procesos distintos, así que un valor
+ * aleatorio —aunque se guardara en `globalThis`— sería diferente en cada
+ * proceso. La cookie firmada al iniciar sesión no validaría al descargar un
+ * PDF, y la descarga acabaría redirigiendo a la pantalla de acceso.
+ *
+ * No es secreto ni pretende serlo. En producción no se usa nunca: si falta
+ * SESSION_SECRET, el arranque de sesión falla de forma explícita.
+ */
+const DEV_FALLBACK_SECRET =
+  'desarrollo-inseguro-no-usar-en-produccion-prueba-medico-0000';
+
+let avisoEmitido = false;
 
 function secret(): string {
   const s = process.env.SESSION_SECRET;
@@ -25,9 +39,16 @@ function secret(): string {
       'Falta SESSION_SECRET (mínimo 32 caracteres). Sin él las sesiones no son seguras.',
     );
   }
-  // Solo desarrollo: efímero, invalida las sesiones al reiniciar el servidor.
-  devSecret ??= randomBytes(32).toString('hex');
-  return devSecret;
+
+  if (!avisoEmitido) {
+    avisoEmitido = true;
+    console.warn(
+      '[sesión] SESSION_SECRET no está definida: se usa un secreto de desarrollo conocido. ' +
+        'Define SESSION_SECRET antes de exponer este servidor a alguien más.',
+    );
+  }
+
+  return DEV_FALLBACK_SECRET;
 }
 
 function sign(payload: string): string {
