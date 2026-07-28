@@ -11,7 +11,8 @@
     "db:generate": "drizzle-kit generate",
     "test:e2e": "node tests/e2e/glucose-flow.mjs",
     "test:e2e:auth": "node tests/e2e/auth-flow.mjs",
-    "test:e2e:mediciones": "node tests/e2e/measurements-flow.mjs"
+    "test:e2e:mediciones": "node tests/e2e/measurements-flow.mjs",
+    "test:e2e:medicamentos": "node tests/e2e/medications-flow.mjs"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",

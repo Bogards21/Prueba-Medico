@@ -10,12 +10,14 @@ export const metadata: Metadata = {
     'Registra tu glucosa, peso, presión y medicamentos, observa tus tendencias y prepara tu próxima consulta.',
 };
 
-/** §18.3 — navegación principal del PRD. */
-// Solo las rutas ya implementadas. El resto (Medicamentos, Aprender,
-// Reportes, Perfil) se añaden conforme avanzan las fases del plan.
+/**
+ * §18.3 — navegación principal del PRD. Solo las rutas ya implementadas;
+ * faltan Tendencias, Aprender y Reportes.
+ */
 const NAV = [
   { href: '/', label: 'Inicio' },
   { href: '/registrar', label: 'Registrar' },
+  { href: '/medicamentos', label: 'Medicamentos' },
   { href: '/perfil', label: 'Perfil' },
 ];
 

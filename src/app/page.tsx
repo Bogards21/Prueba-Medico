@@ -5,10 +5,13 @@ import { summarize } from '@/domain/trends';
 import { GLUCOSE_CONTEXT_LABELS, toMgDl } from '@/domain/glucose';
 import type { GlucoseContext, GlucoseUnit } from '@/domain/glucose';
 import { weightDelta } from '@/domain/weight';
+import { getTodayDoses } from './actions/medications';
 
 export const dynamic = 'force-dynamic';
 
 const DIAS = 7;
+
+const horaCorta = new Intl.DateTimeFormat('es-MX', { hour: '2-digit', minute: '2-digit' });
 
 const fecha = new Intl.DateTimeFormat('es-MX', {
   day: 'numeric',
@@ -31,10 +34,11 @@ function Cifra({ valor, sufijo }: { valor: number | null; sufijo?: string }) {
 }
 
 export default async function InicioPage() {
-  const [registros, pesos, presiones] = await Promise.all([
+  const [registros, pesos, presiones, dosisHoy] = await Promise.all([
     listGlucose(),
     listWeight(),
     listBloodPressure(),
+    getTodayDoses(),
   ]);
 
   const to = new Date();
@@ -47,6 +51,9 @@ export default async function InicioPage() {
       ? weightDelta(Number(ultimoPeso.value), Number(anteriorPeso.value))
       : null;
   const ultimaPresion = presiones[0] ?? null;
+  // RF-09 — pendiente significa "sin marcar"; que el recordatorio se haya
+  // entregado no implica que la toma se haya hecho.
+  const pendientesHoy = dosisHoy.filter((d) => d.status === 'pending');
 
   const resumen = summarize(
     registros.map((r) => ({
@@ -71,6 +78,40 @@ export default async function InicioPage() {
       >
         Registrar una medición
       </Link>
+
+      {/* RF-10 — "próximos recordatorios" arriba: §18.2, primero las acciones. */}
+      {pendientesHoy.length > 0 && (
+        <section aria-labelledby="tomas-titulo" className="space-y-3">
+          <h2 id="tomas-titulo" className="text-xl font-semibold text-slate-900">
+            Te faltan tomas hoy
+          </h2>
+          <ul className="divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200 bg-white">
+            {pendientesHoy.slice(0, 4).map((d) => (
+              <li
+                key={`${d.medicationId}-${d.scheduledAt.toISOString()}`}
+                className="flex items-baseline justify-between gap-4 px-4 py-4"
+              >
+                <div>
+                  <p className="text-lg font-semibold text-slate-900">{d.medicationName}</p>
+                  {d.doseText && <p className="text-base text-slate-600">{d.doseText}</p>}
+                </div>
+                <time
+                  dateTime={d.scheduledAt.toISOString()}
+                  className="shrink-0 text-lg tabular-nums text-slate-700"
+                >
+                  {horaCorta.format(d.scheduledAt)}
+                </time>
+              </li>
+            ))}
+          </ul>
+          <Link
+            href="/medicamentos"
+            className="inline-block text-lg font-medium text-teal-800 underline underline-offset-4 hover:text-teal-900"
+          >
+            Marcar mis tomas
+          </Link>
+        </section>
+      )}
 
       <section aria-labelledby="resumen-titulo" className="space-y-3">
         <h2 id="resumen-titulo" className="text-xl font-semibold text-slate-900">

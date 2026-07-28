@@ -32,16 +32,22 @@ MVP en construcción. Fase 1 (rebanada vertical) en curso.
 | `src/domain/profile.ts` | RF-03 | Perfil personal y clínico; coherencia entre nacimiento, edad y diagnóstico |
 | `src/domain/weight.ts` | RF-05 | Peso, conversión kg/lb y cambio respecto a la medición anterior |
 | `src/domain/blood-pressure.ts` | RF-06 | Presión arterial; sistólica > diastólica y confirmación de cifras atípicas |
+| `src/domain/time-zone.ts` | RF-09, §13.4 | Hora civil ↔ UTC vía Intl, correcta en cambios de horario de verano |
+| `src/domain/medication.ts` | RF-08, RF-09, CA-06 | Tomas previstas por día civil y adherencia autorreportada |
 
 Pantallas: alta de cuenta con verificación de correo, inicio y cierre de
-sesión, onboarding de consentimientos y perfil, edición de perfil, dashboard
-y registro de glucosa, peso y presión arterial.
+sesión, onboarding de consentimientos y perfil, edición de perfil, dashboard,
+registro de glucosa, peso y presión arterial, y gestión de medicamentos con
+sus tomas del día.
 
 ### Pendiente
 
-Actividad física (RF-07), medicamentos y recordatorios (RF-08/RF-09),
-contenido educativo (RF-12), metas (RF-14), reportes PDF (RF-15), panel
-administrativo (RF-16) y suscripciones (RF-17).
+Actividad física (RF-07), contenido educativo (RF-12), metas (RF-14),
+reportes PDF (RF-15), panel administrativo (RF-16) y suscripciones (RF-17).
+
+Los recordatorios se calculan y se muestran dentro de la aplicación, pero
+**todavía no se envían** por ningún canal: eso depende del servicio de
+notificaciones del §27, aún no contratado.
 
 ## Arquitectura
 
@@ -77,6 +83,7 @@ Pruebas de navegador, con el servidor levantado en otra terminal:
 npm run test:e2e:auth        # alta, verificación, consentimientos, sesión
 npm run test:e2e             # registro de glucosa y dashboard
 npm run test:e2e:mediciones  # perfil, peso y presión arterial
+npm run test:e2e:medicamentos # medicamentos, tomas y adherencia
 ```
 
 Cada corrida crea su propia cuenta, así que no hace falta vaciar la base. Para
