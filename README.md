@@ -37,13 +37,14 @@ MVP en construcción. Fase 1 (rebanada vertical) en curso.
 | `src/domain/report.ts` | RF-15, CA-07 | Armado del reporte; solo lo que el usuario marca, con aclaración de alcance |
 | `src/domain/content.ts` | RF-12, CA-09, RB-07 | Flujo editorial y permisos; editar lo publicado revoca la aprobación |
 | `src/domain/rules/governance.ts` | RF-13, §15, §22 | Gobierno de las reglas: quién las toca y qué hace falta para activarlas |
+| `src/domain/admin.ts` | RF-16, §15, §17.2 | Permisos del panel y ámbito de la auditoría por rol |
 
 Pantallas: alta de cuenta con verificación de correo, inicio y cierre de
 sesión, onboarding de consentimientos y perfil, edición de perfil, dashboard,
 registro de glucosa, peso y presión arterial, gestión de medicamentos con
 sus tomas del día, reporte en PDF para la consulta, catálogo educativo para
-el paciente, panel editorial con aprobación clínica y gestión de reglas
-clínicas.
+el paciente, panel editorial con aprobación clínica, gestión de reglas
+clínicas y panel administrativo con usuarios, auditoría y métricas.
 
 Con esto el motor de reglas queda operativo de punta a punta: una regla
 creada, aprobada y activada por el responsable clínico se evalúa al registrar
@@ -52,8 +53,8 @@ constancia del evento.
 
 ### Pendiente
 
-Actividad física (RF-07), metas (RF-14), el resto del panel administrativo
-(RF-16: usuarios, planes, auditoría consultable) y suscripciones (RF-17).
+Actividad física (RF-07), metas y rachas (RF-14), gestión de planes y
+suscripciones (RF-17).
 
 Los recordatorios se calculan y se muestran dentro de la aplicación, pero
 **todavía no se envían** por ningún canal: eso depende del servicio de
@@ -104,6 +105,7 @@ npm run test:e2e:medicamentos # medicamentos, tomas y adherencia
 npm run test:e2e:reportes    # reporte para la consulta y descarga del PDF
 npm run test:e2e:contenido   # flujo editorial y aprobación clínica
 npm run test:e2e:reglas      # gobierno de reglas clínicas, de extremo a extremo
+npm run test:e2e:panel       # panel administrativo, roles y ámbito de auditoría
 ```
 
 Cada corrida crea su propia cuenta, así que no hace falta vaciar la base.
@@ -150,6 +152,14 @@ firmado por un profesional.
 Las reglas clínicas solo las gestiona el rol `clinical_reviewer`. Ni el
 administrador general entra, porque RB-06 exige permisos especiales para lo
 clínico.
+
+Por el mismo motivo, **nadie puede cambiar su propio rol**: un administrador
+que pudiera auto-asignarse `clinical_reviewer` se saltaría RB-06 con un clic.
+
+El §15 concede acceso "Limitado" a la auditoría sin concretar qué significa.
+Aquí se concreta por ámbito: el responsable clínico ve contenido, reglas y
+alertas; soporte ve cuentas, consentimientos y perfiles; solo el administrador
+ve todo. El filtro va en la consulta SQL, no al pintar la tabla.
 
 Los umbrales que aparecen en `src/domain/glucose.ts` son límites **técnicos de
 captura** (¿pudo un glucómetro producir este número?), no criterios clínicos.

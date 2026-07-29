@@ -28,21 +28,16 @@ const NAV_INVITADO = [
   { href: '/registro', label: 'Crear cuenta' },
 ];
 
-/** Enlaces internos. Se ocultan por comodidad; cada pantalla revalida el rol. */
-const NAV_CONTENIDO = { href: '/admin/contenido', label: 'Contenido' };
-const NAV_REGLAS = { href: '/admin/reglas', label: 'Reglas' };
+/** Enlace interno. Se oculta por comodidad; cada pantalla revalida el rol. */
+const NAV_PANEL = { href: '/admin', label: 'Panel' };
+const ROLES_INTERNOS = ['admin', 'editor', 'clinical_reviewer', 'support', 'analyst'];
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const actor = await getActor();
   const conSesion = actor !== null;
 
   const enlaces = conSesion ? [...NAV] : NAV_INVITADO;
-  if (actor && ['admin', 'editor', 'clinical_reviewer'].includes(actor.role)) {
-    enlaces.push(NAV_CONTENIDO);
-  }
-  if (actor?.role === 'clinical_reviewer') {
-    enlaces.push(NAV_REGLAS);
-  }
+  if (actor && ROLES_INTERNOS.includes(actor.role)) enlaces.push(NAV_PANEL);
 
   return (
     <html lang="es-MX">
