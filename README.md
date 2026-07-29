@@ -36,12 +36,19 @@ MVP en construcción. Fase 1 (rebanada vertical) en curso.
 | `src/domain/medication.ts` | RF-08, RF-09, CA-06 | Tomas previstas por día civil y adherencia autorreportada |
 | `src/domain/report.ts` | RF-15, CA-07 | Armado del reporte; solo lo que el usuario marca, con aclaración de alcance |
 | `src/domain/content.ts` | RF-12, CA-09, RB-07 | Flujo editorial y permisos; editar lo publicado revoca la aprobación |
+| `src/domain/rules/governance.ts` | RF-13, §15, §22 | Gobierno de las reglas: quién las toca y qué hace falta para activarlas |
 
 Pantallas: alta de cuenta con verificación de correo, inicio y cierre de
 sesión, onboarding de consentimientos y perfil, edición de perfil, dashboard,
 registro de glucosa, peso y presión arterial, gestión de medicamentos con
 sus tomas del día, reporte en PDF para la consulta, catálogo educativo para
-el paciente y panel editorial con aprobación clínica.
+el paciente, panel editorial con aprobación clínica y gestión de reglas
+clínicas.
+
+Con esto el motor de reglas queda operativo de punta a punta: una regla
+creada, aprobada y activada por el responsable clínico se evalúa al registrar
+una medición, muestra su mensaje aprobado con el nivel correspondiente y deja
+constancia del evento.
 
 ### Pendiente
 
@@ -96,6 +103,7 @@ npm run test:e2e:mediciones  # perfil, peso y presión arterial
 npm run test:e2e:medicamentos # medicamentos, tomas y adherencia
 npm run test:e2e:reportes    # reporte para la consulta y descarga del PDF
 npm run test:e2e:contenido   # flujo editorial y aprobación clínica
+npm run test:e2e:reglas      # gobierno de reglas clínicas, de extremo a extremo
 ```
 
 Cada corrida crea su propia cuenta, así que no hace falta vaciar la base.
@@ -133,10 +141,15 @@ y `approvedAt`** (`src/domain/rules/engine.ts`). Esto no es validación
 defensiva: es el mecanismo que impide que la plataforma emita un mensaje
 clínico que ningún profesional haya revisado, tal como exige el §22 del PRD.
 
-El contenido educativo sigue la misma lógica: **editar un texto ya publicado
-revoca su aprobación y lo devuelve a revisión** (`statusAfterEdit`). Sin eso,
-la aprobación clínica sería un trámite de una sola vez y cualquier editor
-podría reescribir después un texto ya firmado por un profesional.
+El contenido educativo y las reglas clínicas siguen la misma lógica: **editar
+algo ya aprobado revoca su aprobación** (`statusAfterEdit`,
+`statusAfterRuleEdit`). Sin eso, la aprobación sería un trámite de una sola
+vez y cualquiera podría reescribir después un texto —o mover un umbral— ya
+firmado por un profesional.
+
+Las reglas clínicas solo las gestiona el rol `clinical_reviewer`. Ni el
+administrador general entra, porque RB-06 exige permisos especiales para lo
+clínico.
 
 Los umbrales que aparecen en `src/domain/glucose.ts` son límites **técnicos de
 captura** (¿pudo un glucómetro producir este número?), no criterios clínicos.

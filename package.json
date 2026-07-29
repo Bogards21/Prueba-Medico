@@ -15,7 +15,8 @@
     "test:e2e:medicamentos": "node tests/e2e/medications-flow.mjs",
     "test:e2e:reportes": "node tests/e2e/reports-flow.mjs",
     "set-role": "node scripts/set-role.mjs",
-    "test:e2e:contenido": "node tests/e2e/content-flow.mjs"
+    "test:e2e:contenido": "node tests/e2e/content-flow.mjs",
+    "test:e2e:reglas": "node tests/e2e/rules-flow.mjs"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",

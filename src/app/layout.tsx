@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getSessionUserId } from '@/lib/session';
+import { getActor } from '@/lib/roles';
 import { logout } from './actions/auth';
 import './globals.css';
 
@@ -28,8 +28,21 @@ const NAV_INVITADO = [
   { href: '/registro', label: 'Crear cuenta' },
 ];
 
+/** Enlaces internos. Se ocultan por comodidad; cada pantalla revalida el rol. */
+const NAV_CONTENIDO = { href: '/admin/contenido', label: 'Contenido' };
+const NAV_REGLAS = { href: '/admin/reglas', label: 'Reglas' };
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const conSesion = (await getSessionUserId()) !== null;
+  const actor = await getActor();
+  const conSesion = actor !== null;
+
+  const enlaces = conSesion ? [...NAV] : NAV_INVITADO;
+  if (actor && ['admin', 'editor', 'clinical_reviewer'].includes(actor.role)) {
+    enlaces.push(NAV_CONTENIDO);
+  }
+  if (actor?.role === 'clinical_reviewer') {
+    enlaces.push(NAV_REGLAS);
+  }
 
   return (
     <html lang="es-MX">
@@ -47,7 +60,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             aria-label="Navegación principal"
             className="mx-auto flex max-w-3xl flex-wrap items-center gap-x-1 gap-y-2 px-4 py-3"
           >
-            {(conSesion ? NAV : NAV_INVITADO).map((item) => (
+            {enlaces.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

@@ -11,6 +11,7 @@ import { evaluateRules } from '@/domain/rules/engine';
 import type { RuleEvaluation } from '@/domain/rules/types';
 import { getActiveApprovedRules } from '@/db/rules';
 import { requireUserId } from '@/lib/current-user';
+import { recordAlertEvents } from '@/db/alert-events';
 
 export type SaveResult =
   | { status: 'error'; error: string }
@@ -51,6 +52,8 @@ export async function saveWeight(input: SaveWeightInput): Promise<SaveResult> {
     variable: 'weight',
     value: toKg(input.value, input.unit),
   });
+
+  await recordAlertEvents(userId, registro.id, alerts);
 
   await db.insert(auditLogs).values({
     actorId: userId,
@@ -131,6 +134,8 @@ export async function saveBloodPressure(input: SaveBloodPressureInput): Promise<
     ...evaluateRules(reglas, { variable: 'systolic', value: input.systolic }),
     ...evaluateRules(reglas, { variable: 'diastolic', value: input.diastolic }),
   ];
+
+  await recordAlertEvents(userId, registro.id, alerts);
 
   await db.insert(auditLogs).values({
     actorId: userId,

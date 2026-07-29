@@ -30,6 +30,15 @@ const check = (nombre, cond) => {
 const asignarRol = (correo, rol) =>
   execFileSync('node', ['scripts/set-role.mjs', correo, rol], { encoding: 'utf8' });
 
+/**
+ * La base es compartida entre corridas. Todo se acota a la tarjeta creada por
+ * ESTA corrida —el listado va por fecha de creación descendente, así que es
+ * la primera— y el título lleva un sufijo único para poder buscarlo entre el
+ * contenido de corridas anteriores.
+ */
+const tarjeta = (page) => page.locator('main ul > li').first();
+const TITULO = `Qué significa tu glucosa en ayuno ${Date.now().toString(36)}`;
+
 /* ── Cuenta 1: editor ── */
 const ctxEditor = await browser.newContext({ viewport: { width: 900, height: 1200 } });
 const editor = await ctxEditor.newPage();
@@ -54,60 +63,61 @@ check('§15: un paciente no accede al panel de contenido',
 
 // 2. El paciente no ve nada publicado todavía.
 await paciente.goto(`${BASE}/aprender`, { waitUntil: 'networkidle' });
-check('estado vacío educativo en Aprender',
-  (await paciente.textContent('body')).includes('Todavía no hay material publicado'));
+check('el paciente no ve contenido sin publicar',
+  !(await paciente.textContent('body')).includes(TITULO));
 
 // 3. El editor crea un borrador.
 await editor.goto(`${BASE}/admin/contenido/nuevo`, { waitUntil: 'networkidle' });
-await editor.fill('#title', 'Qué significa tu glucosa en ayuno');
+await editor.fill('#title', TITULO);
 await editor.fill('#summary', 'Una explicación breve y en lenguaje sencillo.');
 await editor.fill('#author', 'Guía de práctica clínica, edición 2026');
 await editor.fill('#body', 'La glucosa en ayuno se mide antes de comer.\n\nHabla con tu profesional de salud sobre tus cifras.');
 await editor.getByRole('button', { name: 'Crear borrador' }).click();
 await editor.waitForURL(/\/admin\/contenido$/, { timeout: 20000 });
-check('el editor crea un borrador', (await editor.textContent('body')).includes('Borrador'));
+const tarjetaEditor = await tarjeta(editor).textContent();
+check('el editor crea un borrador', tarjetaEditor.includes('Borrador'));
 
 // RF-12 — el contenido nace sin aprobación clínica.
 check('el borrador nace sin aprobación clínica',
-  (await editor.textContent('body')).includes('Sin aprobación clínica registrada'));
+  tarjetaEditor.includes('Sin aprobación clínica registrada'));
 
 // 4. RB-07 — el editor no puede aprobar ni publicar.
-const botonesEditor = await editor.locator('button').allTextContents();
+const botonesEditor = await tarjeta(editor).locator('button').allTextContents();
 check('RB-07: el editor no ve la acción de aprobar', !botonesEditor.includes('Aprobar'));
 check('el editor no puede publicar un borrador', !botonesEditor.includes('Publicar'));
 
-await editor.getByRole('button', { name: 'Enviar a revisión' }).click();
-await editor.waitForSelector('text=En revisión clínica', { timeout: 20000 });
+await tarjeta(editor).getByRole('button', { name: 'Enviar a revisión' }).click();
+await tarjeta(editor).getByText('En revisión clínica').waitFor({ timeout: 20000 });
 check('el editor envía a revisión', true);
 
 // Ni siquiera en revisión aparece "Aprobar" para el editor.
 check('RB-07: en revisión, el editor sigue sin poder aprobar',
-  !(await editor.locator('button').allTextContents()).includes('Aprobar'));
+  !(await tarjeta(editor).locator('button').allTextContents()).includes('Aprobar'));
 
 // 5. El responsable clínico aprueba.
 await clinico.goto(`${BASE}/admin/contenido`, { waitUntil: 'networkidle' });
 if (OUT) await clinico.screenshot({ path: `${OUT}/16-admin-contenido.png`, fullPage: true });
-await clinico.getByRole('button', { name: 'Aprobar' }).click();
-await clinico.waitForSelector('text=Aprobado, sin publicar', { timeout: 20000 });
+await tarjeta(clinico).getByRole('button', { name: 'Aprobar' }).click();
+await tarjeta(clinico).getByText('Aprobado, sin publicar').waitFor({ timeout: 20000 });
 check('§15: el responsable clínico aprueba', true);
 check('RF-12: queda registrada la fecha de revisión clínica',
-  (await clinico.textContent('body')).includes('Revisión clínica del'));
+  (await tarjeta(clinico).textContent()).includes('Revisión clínica del'));
 
 // Aprobado pero sin publicar: el paciente todavía no lo ve.
 await paciente.goto(`${BASE}/aprender`, { waitUntil: 'networkidle' });
 check('aprobado no es publicado: el paciente aún no lo ve',
-  (await paciente.textContent('body')).includes('Todavía no hay material publicado'));
+  !(await paciente.textContent('body')).includes(TITULO));
 
 // 6. Publicar.
-await clinico.getByRole('button', { name: 'Publicar' }).click();
-await clinico.waitForSelector('text=Publicado', { timeout: 20000 });
+await tarjeta(clinico).getByRole('button', { name: 'Publicar' }).click();
+await tarjeta(clinico).getByText('Publicado').waitFor({ timeout: 20000 });
 check('se publica el contenido aprobado', true);
 
 await paciente.goto(`${BASE}/aprender`, { waitUntil: 'networkidle' });
 check('el paciente ya ve el contenido publicado',
-  (await paciente.textContent('body')).includes('Qué significa tu glucosa en ayuno'));
+  (await paciente.textContent('body')).includes(TITULO));
 
-await paciente.getByRole('link', { name: /Qué significa tu glucosa/ }).click();
+await paciente.getByRole('link', { name: TITULO }).click();
 await paciente.waitForSelector('text=Autor o fuente', { timeout: 20000 });
 const articulo = await paciente.textContent('body');
 check('RF-12: el artículo muestra autor o fuente',
@@ -118,7 +128,7 @@ if (OUT) await paciente.screenshot({ path: `${OUT}/17-aprender-articulo.png`, fu
 
 // 7. CA-09 — editar lo publicado lo devuelve a revisión y lo oculta.
 await editor.goto(`${BASE}/admin/contenido`, { waitUntil: 'networkidle' });
-await editor.getByRole('link', { name: 'Editar' }).first().click();
+await tarjeta(editor).getByRole('link', { name: 'Editar' }).click();
 await editor.waitForSelector('#title', { timeout: 20000 });
 check('CA-09: avisa de que se perderá la aprobación antes de guardar',
   (await editor.textContent('body')).includes('volverá a revisión'));
@@ -127,7 +137,7 @@ await editor.fill('#body', 'Texto reescrito por completo después de la aprobaci
 await editor.getByRole('button', { name: 'Guardar cambios' }).click();
 await editor.waitForURL(/\/admin\/contenido$/, { timeout: 20000 });
 
-const trasEditar = await editor.textContent('body');
+const trasEditar = await tarjeta(editor).textContent();
 check('CA-09: editar lo publicado lo devuelve a revisión',
   trasEditar.includes('En revisión clínica'));
 check('CA-09: se invalida la aprobación anterior',
@@ -137,7 +147,7 @@ check('RF-12: la versión se incrementa', trasEditar.includes('versión 2'));
 // Y el paciente deja de verlo: RB-07, sin aprobación no hay publicación.
 await paciente.goto(`${BASE}/aprender`, { waitUntil: 'networkidle' });
 check('RB-07: el texto reescrito desaparece hasta una nueva aprobación',
-  (await paciente.textContent('body')).includes('Todavía no hay material publicado'));
+  !(await paciente.textContent('body')).includes(TITULO));
 
 await browser.close();
 console.log(fallos.length === 0 ? '\nTODO VERDE' : `\nFALLOS: ${fallos.join(', ')}`);

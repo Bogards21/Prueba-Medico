@@ -10,6 +10,7 @@ import { evaluateRules } from '@/domain/rules/engine';
 import type { RuleEvaluation } from '@/domain/rules/types';
 import { getActiveApprovedRules } from '@/db/rules';
 import { requireUserId } from '@/lib/current-user';
+import { recordAlertEvents } from '@/db/alert-events';
 
 export interface SaveGlucoseInput {
   value: number;
@@ -67,6 +68,9 @@ export async function saveGlucose(input: SaveGlucoseInput): Promise<SaveGlucoseR
     variable: 'glucose',
     value: toMgDl(input.value, input.unit),
   });
+
+  // CA-05 — el evento mostrado queda registrado.
+  await recordAlertEvents(userId, record.id, alerts);
 
   await db.insert(auditLogs).values({
     actorId: userId,
