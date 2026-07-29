@@ -35,16 +35,18 @@ MVP en construcción. Fase 1 (rebanada vertical) en curso.
 | `src/domain/time-zone.ts` | RF-09, §13.4 | Hora civil ↔ UTC vía Intl, correcta en cambios de horario de verano |
 | `src/domain/medication.ts` | RF-08, RF-09, CA-06 | Tomas previstas por día civil y adherencia autorreportada |
 | `src/domain/report.ts` | RF-15, CA-07 | Armado del reporte; solo lo que el usuario marca, con aclaración de alcance |
+| `src/domain/content.ts` | RF-12, CA-09, RB-07 | Flujo editorial y permisos; editar lo publicado revoca la aprobación |
 
 Pantallas: alta de cuenta con verificación de correo, inicio y cierre de
 sesión, onboarding de consentimientos y perfil, edición de perfil, dashboard,
 registro de glucosa, peso y presión arterial, gestión de medicamentos con
-sus tomas del día, y reporte en PDF para la consulta.
+sus tomas del día, reporte en PDF para la consulta, catálogo educativo para
+el paciente y panel editorial con aprobación clínica.
 
 ### Pendiente
 
-Actividad física (RF-07), contenido educativo (RF-12), metas (RF-14), panel
-administrativo (RF-16) y suscripciones (RF-17).
+Actividad física (RF-07), metas (RF-14), el resto del panel administrativo
+(RF-16: usuarios, planes, auditoría consultable) y suscripciones (RF-17).
 
 Los recordatorios se calculan y se muestran dentro de la aplicación, pero
 **todavía no se envían** por ningún canal: eso depende del servicio de
@@ -93,6 +95,7 @@ npm run test:e2e             # registro de glucosa y dashboard
 npm run test:e2e:mediciones  # perfil, peso y presión arterial
 npm run test:e2e:medicamentos # medicamentos, tomas y adherencia
 npm run test:e2e:reportes    # reporte para la consulta y descarga del PDF
+npm run test:e2e:contenido   # flujo editorial y aprobación clínica
 ```
 
 Cada corrida crea su propia cuenta, así que no hace falta vaciar la base.
@@ -112,12 +115,28 @@ integración, donde sí hay un único proceso.
 producción**: sin ella el servidor se niega a crear sesiones. En desarrollo,
 si falta, se usa un secreto conocido e inseguro y se avisa por consola.
 
+### Roles
+
+Las cuentas nacen como `patient`. Mientras la gestión de usuarios del panel
+(RF-16) no exista, el primer responsable clínico se asigna a mano:
+
+```bash
+npm run set-role -- alguien@ejemplo.mx clinical_reviewer
+```
+
+Roles: `patient`, `admin`, `editor`, `clinical_reviewer`, `support`, `analyst`.
+
 ## Frontera clínica en el código
 
 El motor de reglas **rechaza evaluar cualquier regla que no tenga `approvedBy`
 y `approvedAt`** (`src/domain/rules/engine.ts`). Esto no es validación
 defensiva: es el mecanismo que impide que la plataforma emita un mensaje
 clínico que ningún profesional haya revisado, tal como exige el §22 del PRD.
+
+El contenido educativo sigue la misma lógica: **editar un texto ya publicado
+revoca su aprobación y lo devuelve a revisión** (`statusAfterEdit`). Sin eso,
+la aprobación clínica sería un trámite de una sola vez y cualquier editor
+podría reescribir después un texto ya firmado por un profesional.
 
 Los umbrales que aparecen en `src/domain/glucose.ts` son límites **técnicos de
 captura** (¿pudo un glucómetro producir este número?), no criterios clínicos.
