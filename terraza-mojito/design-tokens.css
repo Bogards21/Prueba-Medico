@@ -1,0 +1,133 @@
+/* Terraza Mojito — tokens de diseño
+ *
+ * Derivados del Manual de Identidad Gráfica v1.0 (8 ago 2026).
+ * Los ratios de contraste están medidos contra el algoritmo WCAG 2.1,
+ * no estimados. Ver terraza-mojito/PRD.md §8 para la tabla completa.
+ *
+ * REGLA DURA: no introducir verdes fuera de esta paleta. El manual lo
+ * prohíbe explícitamente ("No cambiar los verdes de forma arbitraria").
+ */
+
+:root {
+  /* ---- Paleta principal ---- */
+  --tm-verde-noche:    #0A2F0F;  /* titulares, texto, fondos de contraste */
+  --tm-verde-mojito:   #309830;  /* color protagonista — DECORATIVO, ver nota */
+  --tm-verde-lima:     #43B33C;  /* acentos, sol — DECORATIVO, ver nota */
+  --tm-blanco-espuma:  #FFFFFF;  /* fondo dominante (55% de la superficie) */
+
+  /* ---- Paleta secundaria ---- */
+  --tm-hoja-profunda:  #1F6821;  /* botones primarios, bloques secundarios */
+  --tm-menta-suave:    #A0E09B;  /* fondos suaves, tarjetas */
+  --tm-lima-palida:    #DDF3B5;  /* fondos promocionales */
+  --tm-carbon:         #162018;  /* texto largo — alternativa al negro puro */
+
+  /* ---- Roles semánticos ----
+   * Estos son los que usa el código. Nunca referenciar un color de marca
+   * directamente en un componente: usar el rol.
+   */
+  --tm-fondo:            var(--tm-blanco-espuma);
+  --tm-fondo-alt:        var(--tm-menta-suave);
+  --tm-fondo-promo:      var(--tm-lima-palida);
+  --tm-fondo-inverso:    var(--tm-verde-noche);
+
+  --tm-texto:            var(--tm-carbon);        /* 16.75:1 sobre blanco */
+  --tm-texto-titular:    var(--tm-verde-noche);   /* 14.72:1 sobre blanco */
+  --tm-texto-inverso:    var(--tm-blanco-espuma); /* 14.72:1 sobre Verde Noche */
+
+  /* Botón primario: Hoja Profunda, NO Verde Mojito.
+   * Verde Mojito + texto blanco = 3.71:1 → reprueba AA para texto normal.
+   * Hoja Profunda + texto blanco = 6.86:1 → cumple. */
+  --tm-cta-fondo:        var(--tm-hoja-profunda);
+  --tm-cta-texto:        var(--tm-blanco-espuma);
+  --tm-cta-fondo-hover:  var(--tm-verde-noche);
+
+  --tm-borde:            #D6E4D4;
+  --tm-borde-foco:       var(--tm-verde-noche);
+
+  /* Verde Mojito y Verde Lima quedan reservados a superficie decorativa:
+   * ilustraciones, patrones, rellenos grandes, iconos ≥24px.
+   * Sobre ellos, el texto SIEMPRE va en Verde Noche o Carbón. */
+  --tm-decorativo:       var(--tm-verde-mojito);
+  --tm-decorativo-claro: var(--tm-verde-lima);
+
+  /* ---- Tipografía ---- */
+  --tm-fuente-display:   'Fredoka', 'Arial Rounded MT Bold', system-ui, sans-serif;
+  --tm-fuente-titular:   'Nunito Sans', Arial, sans-serif;
+  --tm-fuente-texto:     'Nunito Sans', Arial, sans-serif;
+  --tm-fuente-datos:     'DM Sans', Arial, sans-serif;
+
+  /* ---- Radios ----
+   * El manual pide "bordes redondeados y contornos orgánicos". */
+  --tm-radio-sm:  8px;
+  --tm-radio-md:  16px;
+  --tm-radio-lg:  24px;
+  --tm-radio-pill: 999px;
+
+  /* ---- Espaciado ---- */
+  --tm-esp-1: 0.25rem;
+  --tm-esp-2: 0.5rem;
+  --tm-esp-3: 0.75rem;
+  --tm-esp-4: 1rem;
+  --tm-esp-6: 1.5rem;
+  --tm-esp-8: 2rem;
+  --tm-esp-12: 3rem;
+  --tm-esp-16: 4rem;
+  --tm-esp-24: 6rem;
+}
+
+/* Jerarquía tipográfica del manual §5 */
+.tm-h1 {
+  font-family: var(--tm-fuente-display);
+  font-weight: 700;
+  font-size: clamp(2.25rem, 5vw + 1rem, 4rem);   /* 36 → 64px */
+  line-height: 1.05;
+  color: var(--tm-texto-titular);
+}
+
+.tm-h2 {
+  font-family: var(--tm-fuente-titular);
+  font-weight: 800;
+  font-size: clamp(1.75rem, 3vw + 0.5rem, 2.5rem); /* 28 → 40px */
+  line-height: 1.1;
+  color: var(--tm-texto-titular);
+}
+
+.tm-h3 {
+  font-family: var(--tm-fuente-titular);
+  font-weight: 700;
+  font-size: clamp(1.375rem, 1.5vw + 0.75rem, 1.75rem); /* 22 → 28px */
+  line-height: 1.2;
+  color: var(--tm-texto-titular);
+}
+
+.tm-texto {
+  font-family: var(--tm-fuente-texto);
+  font-weight: 400;
+  font-size: 1.0625rem;  /* 17px */
+  line-height: 1.5;
+  color: var(--tm-texto);
+}
+
+.tm-dato {
+  font-family: var(--tm-fuente-datos);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.03em;
+}
+
+/* El foco visible nunca se elimina: es requisito AA. */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid var(--tm-borde-foco);
+  outline-offset: 2px;
+}
+
+/* El manual pide soporte de reducción de movimiento para el logo animado.
+ * Se aplica a toda la página por coherencia. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
