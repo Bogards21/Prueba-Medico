@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Terraza Mojito — capa base.
+ * Paleta y tipografía provienen del Manual de Identidad v1.0.
+ * Proporción cromática objetivo: 55% blanco, 25% Verde Noche,
+ * 15% Verde Mojito, 5% Verde Lima / Menta Suave.
+ */
+
+@layer base {
+  :root {
+    --font-fredoka: 'Fredoka', 'Arial Rounded MT Bold', system-ui, sans-serif;
+    --font-nunito: 'Nunito Sans', Arial, sans-serif;
+    --font-dm-sans: 'DM Sans', Arial, sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Compensa el header sticky al saltar a un ancla */
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: #ffffff;
+    color: #162018;
+    font-family: var(--font-nunito);
+    font-size: 17px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    color: #0a2f0f;
+    text-wrap: balance;
+  }
+
+  /* El foco visible es requisito AA — nunca se elimina. */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid #0a2f0f;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Sobre fondo oscuro el contorno oscuro sería invisible. */
+  .sobre-oscuro :where(a, button, input, select, [tabindex]):focus-visible {
+    outline-color: #a0e09b;
+  }
+
+  ::selection {
+    background: #a0e09b;
+    color: #0a2f0f;
+  }
+}
+
+@layer components {
+  /* --- Tipografía --- */
+  .display {
+    font-family: var(--font-fredoka);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+  }
+
+  .dato {
+    font-family: var(--font-dm-sans);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  /* --- Botones ---
+   * El primario usa Hoja Profunda, no Verde Mojito: blanco sobre
+   * #309830 mide 3.71:1 y reprueba AA para texto de botón.
+   * Blanco sobre #1F6821 mide 6.86:1. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-pill font-data font-bold
+           transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none;
+    min-height: 48px;
+    padding: 0 1.75rem;
+    letter-spacing: 0.03em;
+  }
+
+  .btn-primario {
+    @apply btn bg-hoja text-espuma shadow-card;
+  }
+  .btn-primario:hover:not(:disabled) {
+    @apply bg-noche shadow-card-hover;
+    transform: translateY(-2px);
+  }
+
+  .btn-secundario {
+    @apply btn border-2 border-noche bg-transparent text-noche;
+  }
+  .btn-secundario:hover:not(:disabled) {
+    @apply bg-noche text-espuma;
+  }
+
+  .btn-claro {
+    @apply btn bg-espuma text-noche shadow-card;
+  }
+  .btn-claro:hover:not(:disabled) {
+    @apply bg-menta;
+    transform: translateY(-2px);
+  }
+
+  .btn-fantasma {
+    @apply btn text-noche;
+    min-height: 44px;
+    padding: 0 1rem;
+  }
+  .btn-fantasma:hover:not(:disabled) {
+    @apply bg-lima-pale;
+  }
+
+  /* --- Superficies --- */
+  .tarjeta {
+    @apply rounded-lg border border-borde bg-espuma shadow-studio;
+  }
+
+  .campo {
+    @apply w-full rounded-sm border-2 border-borde bg-espuma px-4 py-3
+           text-carbon transition-colors placeholder:text-neutral-400;
+    min-height: 48px;
+  }
+  .campo:focus {
+    @apply border-hoja;
+  }
+  .campo[aria-invalid='true'] {
+    @apply border-red-500 bg-red-50;
+  }
+
+  .etiqueta {
+    @apply mb-1.5 block font-data text-sm font-bold uppercase tracking-wider text-noche;
+  }
+
+  /* Contenedor de ancho de lectura */
+  .marco {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+}
+
+@layer utilities {
+  /* Borde inferior orgánico: el manual pide contornos redondeados,
+     no cortes rectos entre secciones. */
+  .curva-inferior {
+    border-bottom-left-radius: 48% 12%;
+    border-bottom-right-radius: 48% 12%;
+  }
+  .curva-superior {
+    border-top-left-radius: 48% 12%;
+    border-top-right-radius: 48% 12%;
+  }
+}
+
+/* PRD §41 — soporte de reducción de movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Terraza Mojito">
+  <title>Terraza Mojito</title>
+  <!--
+    Versión TM-L06 del isotipo, obligatoria por debajo de 40 px (Manual §5).
+    Respecto a isotipo.svg se eliminan: venas de las hojas, el segundo cubo de
+    hielo, los gajos del limón y el popote. Los trazos se engrosan para que la
+    silueta aguante a tamaño pequeño.
+  -->
+  <defs>
+    <path id="tms-vaso" d="M74 84h52l-6 79a11 11 0 0 1-11 10H91a11 11 0 0 1-11-10Z"/>
+    <clipPath id="tms-dentro"><use href="#tms-vaso"/></clipPath>
+  </defs>
+
+  <g stroke="#0A2F0F" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="100" cy="56" r="24" fill="#43B33C" stroke="none"/>
+
+    <g fill="#309830">
+      <path d="M114 86C126 66 150 62 164 76 148 94 126 98 114 86Z"/>
+      <path d="M86 86C74 66 50 62 36 76 52 94 74 98 86 86Z"/>
+    </g>
+
+    <use href="#tms-vaso" fill="#309830" stroke="none"/>
+
+    <g clip-path="url(#tms-dentro)" stroke-width="7">
+      <rect x="86" y="98" width="24" height="24" rx="7" fill="#A0E09B"/>
+      <circle cx="100" cy="146" r="17" fill="#DDF3B5"/>
+    </g>
+
+    <use href="#tms-vaso" fill="none"/>
+  </g>
+</svg>

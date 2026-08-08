@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Terraza Mojito">
+  <title>Terraza Mojito</title>
+  <!--
+    Isotipo TM-L03 redibujado en vector siguiendo el Manual de Identidad v1.0:
+    sol, hojas de hierbabuena, vaso, hielo, rodaja de limón y popote.
+    Colores exclusivamente de la paleta oficial. Sin degradados (el manual los prohíbe).
+    Orden de dibujo: sol → hojas → popote → vaso → contenido → contorno.
+    NOTA: reconstrucción a partir del PNG de referencia, no el vector maestro.
+  -->
+  <defs>
+    <!-- Hoja de hierbabuena, punta hacia +X, anclada en el origen -->
+    <g id="tm-hoja">
+      <path d="M0 0C11 -17 32 -20 45 -7 32 9 11 12 0 0Z"/>
+      <path d="M5 -1C17 -4 32 -6 42 -7" fill="none" stroke-width="3.5"/>
+    </g>
+    <!-- El vaso se reutiliza para relleno, recorte y contorno -->
+    <path id="tm-vaso" d="M74 84h52l-6 79a11 11 0 0 1-11 10H91a11 11 0 0 1-11-10Z"/>
+    <clipPath id="tm-dentro"><use href="#tm-vaso"/></clipPath>
+  </defs>
+
+  <g stroke="#0A2F0F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Sol -->
+    <circle cx="100" cy="56" r="24" fill="#43B33C" stroke="none"/>
+
+    <!-- Hojas: dos por lado, abriéndose hacia arriba desde el borde del vaso -->
+    <g fill="#309830">
+      <g transform="translate(114 86)">
+        <use href="#tm-hoja" transform="rotate(-32)"/>
+        <use href="#tm-hoja" transform="rotate(-17)" fill="#1F6821"/>
+      </g>
+      <g transform="translate(86 86) scale(-1 1)">
+        <use href="#tm-hoja" transform="rotate(-32)"/>
+        <use href="#tm-hoja" transform="rotate(-17)" fill="#1F6821"/>
+      </g>
+    </g>
+
+    <!-- Popote -->
+    <path d="M122 54 108 84" stroke-width="10"/>
+    <path d="M122 54 108 84" stroke="#A0E09B" stroke-width="4.5"/>
+
+    <!-- Cuerpo del vaso -->
+    <use href="#tm-vaso" fill="#309830" stroke="none"/>
+
+    <!-- Contenido recortado al interior del vaso: nada se desborda -->
+    <g clip-path="url(#tm-dentro)" stroke-width="4">
+      <rect x="85" y="95" width="20" height="20" rx="5" fill="#A0E09B"/>
+      <rect x="106" y="112" width="16" height="16" rx="5" fill="#A0E09B"/>
+      <g transform="translate(100 146)">
+        <circle r="16" fill="#DDF3B5"/>
+        <circle r="10.5" fill="none" stroke-width="2.5"/>
+        <path d="M0 -10.5V0M0 10.5V0M-10.5 0H0M10.5 0H0M-7.4-7.4 0 0M7.4 7.4 0 0M7.4-7.4 0 0M-7.4 7.4 0 0"
+              stroke-width="2.5"/>
+      </g>
+    </g>
+
+    <!-- Contorno del vaso por encima del contenido -->
+    <use href="#tm-vaso" fill="none" stroke-width="6"/>
+    <path d="M74 84h52" stroke-width="6"/>
+  </g>
+</svg>
