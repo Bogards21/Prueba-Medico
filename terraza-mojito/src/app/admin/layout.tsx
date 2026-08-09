@@ -23,8 +23,8 @@ export default async function LayoutAdmin({ children }: { children: React.ReactN
       <BarraAdmin sesion={sesion} />
       {modoDemo && (
         <p className="bg-amber-100 px-5 py-2 text-center text-sm text-amber-900">
-          <strong>Modo demo:</strong> sin base de datos conectada. Los datos viven en
-          memoria y se pierden al reiniciar el servidor.
+          <strong>Demostración:</strong> las reservas y clientes que ves son datos de
+          ejemplo. Al conectar la base de datos se sustituyen por los reales.
         </p>
       )}
       <main id="contenido" className="flex-1 px-5 py-8 sm:px-8">

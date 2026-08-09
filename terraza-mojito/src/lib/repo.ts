@@ -11,6 +11,7 @@ import {
   type ResumenCliente,
 } from './tipos';
 import { normalizarEmail, normalizarTelefono } from './reserva.schema';
+import { construirSemilla } from './demo-datos';
 
 /**
  * Repositorio de datos.
@@ -46,12 +47,16 @@ interface Almacen {
 
 // Se cuelga de globalThis para sobrevivir al hot-reload de Next en desarrollo.
 const g = globalThis as unknown as { __tmStore?: Almacen };
-const store: Almacen = (g.__tmStore ??= {
-  clientes: [],
-  reservas: [],
-  notas: [],
-  historial: [],
-});
+
+/**
+ * En modo demo el almacén nace con datos de ejemplo. En serverless cada
+ * instancia arranca de cero, así que sin esta semilla el panel se vería vacío
+ * en una demo desplegada. La semilla es determinista: todas las instancias
+ * muestran lo mismo y los enlaces al detalle no se rompen.
+ */
+const store: Almacen = (g.__tmStore ??= modoDemo
+  ? construirSemilla()
+  : { clientes: [], reservas: [], notas: [], historial: [] });
 
 const ahora = () => new Date().toISOString();
 

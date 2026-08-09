@@ -51,7 +51,7 @@ export function Confirmacion({
       <dl className="tarjeta mt-8 divide-y divide-borde text-left">
         <div className="flex justify-between gap-4 px-6 py-4">
           <dt className="dato text-sm uppercase text-carbon/60">Fecha</dt>
-          <dd className="font-semibold capitalize text-noche">{fecha}</dd>
+          <dd className="font-semibold text-noche first-letter:uppercase">{fecha}</dd>
         </div>
         <div className="flex justify-between gap-4 px-6 py-4">
           <dt className="dato text-sm uppercase text-carbon/60">Hora</dt>
@@ -76,9 +76,9 @@ export function Confirmacion({
         >
           <TriangleAlert aria-hidden size={20} className="mt-0.5 shrink-0" />
           <p className="text-sm">
-            <strong>Modo demo:</strong> no hay base de datos conectada, así que esta
-            solicitud se guardó solo en memoria y se perderá al reiniciar el servidor.
-            Configura Supabase para que las reservas persistan.
+            <strong>Demostración:</strong> todavía no hay base de datos conectada, así
+            que esta solicitud no se guardó de forma permanente. Al conectar Supabase,
+            cada solicitud llega al panel del negocio y queda registrada.
           </p>
         </div>
       )}

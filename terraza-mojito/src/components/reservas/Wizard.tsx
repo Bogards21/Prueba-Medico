@@ -196,7 +196,7 @@ export function Wizard() {
           <h2 id="t-hora" className="display mb-2 text-3xl">
             ¿A qué hora?
           </h2>
-          <p className="mb-6 capitalize text-carbon/75">
+          <p className="mb-6 text-carbon/75 first-letter:uppercase">
             {borrador.reservation_date && fechaLegible(borrador.reservation_date)}
           </p>
           {errores.reservation_time && (
@@ -608,7 +608,7 @@ function Fila({
     <div className="flex items-start justify-between gap-4 px-6 py-4">
       <dt className="dato shrink-0 text-sm uppercase text-carbon/60">{termino}</dt>
       <dd className="flex min-w-0 items-start gap-3 text-right">
-        <span className="min-w-0 break-words font-semibold capitalize text-noche">{valor}</span>
+        <span className="min-w-0 break-words font-semibold text-noche first-letter:uppercase">{valor}</span>
         <button
           type="button"
           onClick={() => ir(alPaso)}

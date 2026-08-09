@@ -44,7 +44,7 @@ export default async function DetalleReserva({
           <h1 className="display text-3xl capitalize">
             {reserva.cliente.first_name} {reserva.cliente.last_name}
           </h1>
-          <p className="mt-1 capitalize text-carbon/75">
+          <p className="mt-1 text-carbon/75 first-letter:uppercase">
             {fechaLarga} · {formatoAmPm(reserva.reservation_time)}
           </p>
         </div>

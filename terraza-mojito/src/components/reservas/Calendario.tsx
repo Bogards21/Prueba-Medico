@@ -71,7 +71,7 @@ export function Calendario({
           <ChevronLeft aria-hidden size={20} />
           <span className="sr-only">Mes anterior</span>
         </button>
-        <p aria-live="polite" className="dato text-base capitalize text-noche">
+        <p aria-live="polite" className="dato text-base text-noche first-letter:uppercase">
           {MESES[mesVisible.getMonth()]} {mesVisible.getFullYear()}
         </p>
         <button

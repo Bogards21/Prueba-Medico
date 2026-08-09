@@ -136,7 +136,7 @@ function Ranking({
           {filas.map(([etiqueta, n]) => (
             <li key={etiqueta}>
               <div className="mb-1 flex justify-between gap-3 text-sm">
-                <span className="capitalize text-carbon/85">{etiqueta}</span>
+                <span className="text-carbon/85 first-letter:uppercase">{etiqueta}</span>
                 <span className="dato text-noche">{n}</span>
               </div>
               {/* Barra decorativa: el número ya está en el texto de al lado. */}

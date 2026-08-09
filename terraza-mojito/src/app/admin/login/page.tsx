@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { permiteAccesoDeDesarrollo, authConfigurada, sesionActual } from '@/lib/auth';
+import { permiteAccesoDemo, authConfigurada, sesionActual } from '@/lib/auth';
 import { Logo } from '@/components/ui/Logo';
 import { FormularioLogin } from './FormularioLogin';
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default async function Login() {
   if (await sesionActual()) redirect('/admin');
 
-  const sinConfigurar = !authConfigurada() && !permiteAccesoDeDesarrollo();
+  const sinConfigurar = !authConfigurada() && !permiteAccesoDemo();
 
   return (
     <main className="flex min-h-dvh items-center justify-center bg-lima-pale/30 px-5 py-12">
@@ -38,11 +38,11 @@ export default async function Login() {
             <FormularioLogin />
           )}
 
-          {permiteAccesoDeDesarrollo() && (
+          {permiteAccesoDemo() && (
             <p className="mt-5 rounded-sm bg-lima-pale/60 p-3 text-sm text-carbon/80">
-              Modo desarrollo sin credenciales configuradas: entra con{' '}
-              <strong>admin</strong> / <strong>demo</strong>. Este acceso queda
-              deshabilitado automáticamente en producción.
+              Demostración: entra con <strong>admin</strong> / <strong>demo</strong>. Este
+              acceso se deshabilita solo en cuanto se conecte la base de datos o se
+              definan credenciales reales.
             </p>
           )}
         </div>

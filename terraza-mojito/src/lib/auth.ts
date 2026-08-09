@@ -35,8 +35,22 @@ export function authConfigurada(): boolean {
   return Boolean(secreto() && (process.env.ADMIN_PASSWORD || process.env.STAFF_PASSWORD));
 }
 
-export function permiteAccesoDeDesarrollo(): boolean {
-  return process.env.NODE_ENV !== 'production' && !authConfigurada();
+/**
+ * Acceso de demostración con `admin` / `demo`.
+ *
+ * Se habilita SOLO cuando no hay credenciales configuradas Y no hay base de
+ * datos conectada. Sin Supabase no existen datos reales —lo único visible es
+ * la semilla de ejemplo—, así que no hay nada que proteger, y así una demo
+ * desplegada para un cliente es navegable de punta a punta.
+ *
+ * La regla se autodesactiva: en cuanto se conecta Supabase o se define
+ * ADMIN_PASSWORD, esta puerta se cierra y el panel exige credenciales reales.
+ */
+export function permiteAccesoDemo(): boolean {
+  const hayBaseDeDatos = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+  return !authConfigurada() && !hayBaseDeDatos;
 }
 
 function firmar(carga: string, clave: string): string {
@@ -76,8 +90,7 @@ function deserializar(token: string, clave: string): Sesion | null {
 export function verificarCredenciales(usuario: string, contrasena: string): Sesion | null {
   const u = usuario.trim().toLowerCase();
 
-  if (permiteAccesoDeDesarrollo()) {
-    // Solo fuera de producción y solo mientras no haya credenciales reales.
+  if (permiteAccesoDemo()) {
     if (u === 'admin' && contrasena === 'demo') {
       return { usuario: 'admin', rol: 'admin', expira: Date.now() + DURACION_MS };
     }
