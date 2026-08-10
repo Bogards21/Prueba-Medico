@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { Check } from 'lucide-react';
 import { EstadoApertura } from './EstadoApertura';
 
 /**
@@ -32,17 +33,34 @@ export function Hero() {
           </h1>
 
           <p className="mt-6 max-w-lg text-xl text-carbon/85">
-            Mojitos, terraza y buena compañía. Arma el plan y reserva tu mesa.
+            Mojitos frescos y terraza al aire libre en Metepec. Aparta tu mesa en un
+            minuto y llega a lo único que importa: pasarla bien.
           </p>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
             <Link href="/reservar" className="btn-primario text-base">
               Reserva tu mesa
             </Link>
-            <a href="#experiencia" className="btn-secundario text-base">
-              Conoce la experiencia
+            <a href="#como-funciona" className="btn-secundario text-base">
+              Cómo funciona
             </a>
           </div>
+
+          {/*
+            Reductores de riesgo justo bajo el CTA: son las tres objeciones que
+            frenan el clic —que cueste, que pidan tarjeta, que sea complicado—
+            y las tres son ciertas del sistema tal como está construido.
+          */}
+          <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-[15px] text-carbon/70">
+            {['Reservar es gratis', 'Sin tarjeta ni anticipo', 'Te confirmamos personalmente'].map(
+              (punto) => (
+                <li key={punto} className="flex items-center gap-2">
+                  <Check aria-hidden size={16} className="shrink-0 text-hoja" />
+                  {punto}
+                </li>
+              ),
+            )}
+          </ul>
 
           <EstadoApertura className="mt-8" />
         </div>

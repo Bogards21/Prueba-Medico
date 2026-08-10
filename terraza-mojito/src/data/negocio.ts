@@ -46,6 +46,16 @@ export const negocio = {
   whatsapp: pendiente(''),
   email: pendiente(''),
   rating: pendiente<{ valor: number; resenas: number } | null>(null),
+
+  /**
+   * Testimonios reales de clientes. Es lo único que convierte de verdad en una
+   * landing de venta, y por lo mismo es lo único que NO se puede inventar:
+   * publicar reseñas falsas es engañoso y, en México, sancionable por la
+   * PROFECO. Se llenan copiando reseñas reales de Google o redes, con permiso.
+   */
+  resenas: pendiente<
+    { texto: string; autor: string; fuente: string }[]
+  >([]),
   categoria: pendiente('Bar · Terraza'),
   rangoPrecios: pendiente(''),
 

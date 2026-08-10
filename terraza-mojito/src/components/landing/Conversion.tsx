@@ -9,11 +9,14 @@ export function Conversion() {
           Tu mesa. Tu gente. Tu terraza.
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg text-menta">
-          Mándanos tu solicitud y te confirmamos la mesa.
+          Un minuto ahora te ahorra la incomodidad de llegar y no encontrar lugar.
         </p>
         <Link href="/reservar" className="btn-claro mt-9 text-base">
           Reservar ahora
         </Link>
+        <p className="mt-5 text-sm text-menta/80">
+          Gratis · Sin tarjeta · Te confirmamos por WhatsApp o correo
+        </p>
       </div>
     </section>
   );

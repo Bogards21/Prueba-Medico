@@ -6,9 +6,9 @@ import { Menu, X } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 
 const ENLACES = [
+  { href: '#como-funciona', texto: 'Cómo funciona' },
   { href: '#experiencia', texto: 'Experiencia' },
   { href: '#menu', texto: 'Menú' },
-  { href: '#galeria', texto: 'Galería' },
   { href: '#ubicacion', texto: 'Ubicación' },
 ];
 
