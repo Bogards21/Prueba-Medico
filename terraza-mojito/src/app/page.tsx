@@ -1,3 +1,4 @@
+import { AvisoDemo } from '@/components/landing/AvisoDemo';
 import { Header } from '@/components/landing/Header';
 import { Hero } from '@/components/landing/Hero';
 import { ComoFunciona } from '@/components/landing/ComoFunciona';
@@ -34,6 +35,7 @@ import { StickyCTA } from '@/components/landing/StickyCTA';
 export default function Inicio() {
   return (
     <>
+      <AvisoDemo />
       <Header />
       <main id="contenido">
         <Hero />

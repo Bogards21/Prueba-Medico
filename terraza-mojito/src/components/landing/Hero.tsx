@@ -65,21 +65,36 @@ export function Hero() {
           <EstadoApertura className="mt-8" />
         </div>
 
-        {/* Isotipo grande con hojas flotando */}
+        {/*
+          Firma completa: isotipo + lettering, que es la versión principal del
+          manual (§5). Antes el hero mostraba solo el símbolo y la marca se leía
+          únicamente en el header, a 34 px.
+
+          PENDIENTE: el lettering se compone con Fredoka porque no se recibió el
+          vector maestro. El manual prohíbe sustituir la tipografía dentro de la
+          firma principal, así que esto debe reemplazarse por el SVG original.
+        */}
         <div className="relative mx-auto w-full max-w-md lg:max-w-none">
           <div className="relative aspect-square">
             <div
               aria-hidden
-              className="absolute inset-[8%] rounded-full bg-espuma shadow-card"
+              className="absolute inset-[6%] rounded-full bg-espuma shadow-card"
             />
-            <Image
-              src="/isotipo.svg"
-              alt="Vaso de mojito con hojas de hierbabuena, hielo y rodaja de limón"
-              fill
-              priority
-              sizes="(max-width: 1024px) 90vw, 44vw"
-              className="animate-float object-contain p-[12%]"
-            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-[14%]">
+              <Image
+                src="/isotipo.svg"
+                alt="Vaso de mojito con hojas de hierbabuena, hielo y rodaja de limón"
+                width={300}
+                height={300}
+                priority
+                sizes="(max-width: 1024px) 60vw, 30vw"
+                className="animate-float h-auto w-[62%] max-w-[16rem] object-contain"
+              />
+              <p className="display text-center text-[clamp(1.5rem,4.5vw,2.25rem)] leading-[0.9] text-noche">
+                <span className="block">TERRAZA</span>
+                <span className="block">MOJITO</span>
+              </p>
+            </div>
           </div>
         </div>
       </div>

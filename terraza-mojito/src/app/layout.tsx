@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { negocio } from '@/data/negocio';
+import { CONTENIDO_DEMO, negocio } from '@/data/negocio';
 import './globals.css';
 
 /*
@@ -35,7 +35,11 @@ export const metadata: Metadata = {
     title: 'Terraza Mojito — Frescura que se comparte',
     description: descripcion,
   },
-  robots: { index: true, follow: true },
+  // La vista previa no se indexa: no queremos que un buscador levante un
+  // negocio con datos de ejemplo. Al apagar CONTENIDO_DEMO vuelve a indexarse.
+  robots: CONTENIDO_DEMO
+    ? { index: false, follow: false }
+    : { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
@@ -50,6 +54,11 @@ export const viewport: Viewport = {
  * peor que omitirlos (PRD §14: "No inventar estos datos").
  */
 function datosEstructurados() {
+  // En vista previa NO se emiten datos estructurados: entregarle a Google una
+  // dirección, un teléfono y unas coordenadas inventadas es publicar un
+  // registro falso del negocio, y queda indexado aunque después se corrija.
+  if (CONTENIDO_DEMO) return null;
+
   const base: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'BarOrPub',
@@ -85,10 +94,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href={FUENTES} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(datosEstructurados()) }}
-        />
+        {(() => {
+          const jsonLd = datosEstructurados();
+          if (!jsonLd) return null;
+          return (
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+          );
+        })()}
       </head>
       <body>
         <a

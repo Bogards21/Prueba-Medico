@@ -9,7 +9,7 @@ import { DatoPendiente } from '@/components/ui/DatoPendiente';
 const ORDEN: DiaSemana[] = [1, 2, 3, 4, 5, 6, 0];
 
 export function Ubicacion() {
-  const { direccion, telefono, horarios, redes } = negocio;
+  const { direccion, telefono, horarios, redes, coordenadas } = negocio;
 
   return (
     <section id="ubicacion" className="py-24">
@@ -103,14 +103,44 @@ export function Ubicacion() {
           </div>
 
           {/* Mapa */}
-          <div className="tarjeta flex min-h-[22rem] flex-col items-center justify-center gap-4 bg-lima-pale/40 p-8 text-center">
-            <MapPin aria-hidden size={34} className="text-mojito" />
-            <p className="max-w-xs text-carbon/75">
-              El mapa se activa cuando se confirmen las coordenadas del lugar en
-              Google Maps.
-            </p>
-            <DatoPendiente que="Coordenadas" />
-          </div>
+          {coordenadas.pendiente || !coordenadas.valor ? (
+            <div className="tarjeta flex min-h-[22rem] flex-col items-center justify-center gap-4 bg-lima-pale/40 p-8 text-center">
+              <MapPin aria-hidden size={34} className="text-mojito" />
+              <p className="max-w-xs text-carbon/75">
+                El mapa se activa cuando se confirmen las coordenadas del lugar en
+                Google Maps.
+              </p>
+              <DatoPendiente que="Coordenadas" />
+            </div>
+          ) : (
+            <div className="tarjeta flex flex-col overflow-hidden">
+              {/*
+                OpenStreetMap en lugar de Google Maps: no requiere clave de API
+                ni carga scripts de terceros que rastreen al visitante.
+                loading=lazy para no penalizar el LCP de la página.
+              */}
+              <iframe
+                title={`Mapa de ubicación de ${negocio.nombre.valor}`}
+                loading="lazy"
+                className="min-h-[20rem] w-full flex-1 border-0"
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${
+                  coordenadas.valor.lng - 0.006
+                }%2C${coordenadas.valor.lat - 0.004}%2C${coordenadas.valor.lng + 0.006}%2C${
+                  coordenadas.valor.lat + 0.004
+                }&layer=mapnik&marker=${coordenadas.valor.lat}%2C${coordenadas.valor.lng}`}
+              />
+              <div className="border-t border-borde p-5">
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${coordenadas.valor.lat},${coordenadas.valor.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primario w-full text-sm"
+                >
+                  Cómo llegar
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
