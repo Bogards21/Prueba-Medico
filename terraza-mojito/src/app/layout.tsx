@@ -22,7 +22,15 @@ export const metadata: Metadata = {
   },
   description: descripcion,
   applicationName: 'Terraza Mojito',
-  icons: { icon: '/favicon.svg' },
+  // Generados desde el logotipo original, sobre Verde Noche para que la
+  // silueta se distinga en la pestaña con fondo claro u oscuro.
+  icons: {
+    icon: [
+      { url: '/icon.png', type: 'image/png', sizes: '64x64' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
     title: 'Terraza Mojito — Frescura que se comparte',
     description: descripcion,

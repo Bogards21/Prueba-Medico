@@ -1,25 +1,24 @@
 import Image from 'next/image';
 
 /**
- * Firma de marca.
+ * Firma de marca. Usa los archivos originales que entregó el cliente.
  *
- * ─── Para usar el logotipo original ──────────────────────────────────────
- * 1. Coloca el archivo en `public/logo.png` (o .svg).
- * 2. Pon USAR_ARCHIVO_ORIGINAL en true.
- * Con eso se muestra el activo real y deja de dibujarse la aproximación.
- * ─────────────────────────────────────────────────────────────────────────
+ * Tres casos, porque un solo archivo no sirve para todo:
  *
- * Mientras tanto se compone: isotipo vectorial + lettering en serif.
+ * - `lg` en color → logotipo completo (`logo.png`), símbolo y lettering juntos.
+ *   Es la versión principal y va en el hero.
  *
- * NOTA SOBRE LA TIPOGRAFÍA: el manual describe el lettering como "redondeado
- * personalizado" y fija Fredoka para títulos, pero el logotipo real que envió
- * el cliente usa un SERIF de alto contraste con "EST. 2024" debajo. Aquí manda
- * el activo real, no la descripción del manual, así que la firma va en serif
- * aunque el resto de la web siga usando Fredoka para los títulos.
+ * - `sm`/`md` en color → solo el símbolo (`isotipo-original.png`, recortado del
+ *   original) acompañado del nombre en texto. El logotipo completo a 34 px
+ *   dejaría el lettering ilegible, que es justo lo que el manual §5 pide evitar.
+ *
+ * - `negativa` → isotipo simplificado en blanco. Invertir la ilustración a
+ *   color sobre fondo oscuro la convierte en una mancha sin detalle, así que
+ *   sobre Verde Noche se usa la silueta, como marca el manual.
+ *
+ * El nombre en texto va en serif para coincidir con el lettering del original,
+ * no en Fredoka.
  */
-const USAR_ARCHIVO_ORIGINAL = false;
-const RUTA_ARCHIVO_ORIGINAL = '/logo.png';
-
 export function Logo({
   variante = 'color',
   tamano = 'md',
@@ -29,26 +28,25 @@ export function Logo({
   tamano?: 'sm' | 'md' | 'lg';
   soloIsotipo?: boolean;
 }) {
-  const dims = { sm: 34, md: 46, lg: 128 }[tamano];
   const negativa = variante === 'negativa';
 
-  if (USAR_ARCHIVO_ORIGINAL && !soloIsotipo) {
-    const alto = { sm: 40, md: 56, lg: 190 }[tamano];
+  // Logotipo completo: el archivo ya trae el lettering, no se le añade texto.
+  if (!negativa && tamano === 'lg' && !soloIsotipo) {
     return (
       <Image
-        src={RUTA_ARCHIVO_ORIGINAL}
+        src="/logo.png"
         alt="Terraza Mojito"
-        width={alto}
-        height={alto}
-        priority={tamano === 'lg'}
-        className={`h-auto w-auto ${negativa ? 'brightness-0 invert' : ''}`}
-        style={{ maxHeight: alto }}
+        width={257}
+        height={324}
+        priority
+        sizes="(max-width: 1024px) 60vw, 30vw"
+        className="h-auto w-full max-w-[19rem] object-contain"
       />
     );
   }
 
-  // Manual §5: por debajo de 40 px va la versión simplificada del isotipo.
-  const marca = dims < 40 ? '/isotipo-simple.svg' : '/isotipo.svg';
+  const dims = { sm: 36, md: 48, lg: 128 }[tamano];
+  const marca = negativa ? '/isotipo-simple.svg' : '/isotipo-original.png';
 
   const escalaTexto = { sm: 'text-[15px]', md: 'text-lg', lg: 'text-4xl' }[tamano];
   const escalaEst = { sm: 'text-[7px]', md: 'text-[9px]', lg: 'text-[15px]' }[tamano];
@@ -57,27 +55,29 @@ export function Logo({
     <span className="inline-flex items-center gap-2.5">
       <Image
         src={marca}
-        alt=""
+        alt={soloIsotipo ? 'Terraza Mojito' : ''}
         width={dims}
         height={dims}
         priority={tamano === 'lg'}
         className={negativa ? 'brightness-0 invert' : undefined}
       />
-      <span className={negativa ? 'text-espuma' : 'text-noche'}>
-        <span
-          className={`block font-marca font-bold leading-[0.95] tracking-[0.02em] ${escalaTexto}`}
-        >
-          <span className="block">TERRAZA</span>
-          <span className="block">MOJITO</span>
+      {!soloIsotipo && (
+        <span className={negativa ? 'text-espuma' : 'text-noche'}>
+          <span
+            className={`block font-marca font-bold leading-[0.95] tracking-[0.02em] ${escalaTexto}`}
+          >
+            <span className="block">TERRAZA</span>
+            <span className="block">MOJITO</span>
+          </span>
+          <span
+            className={`mt-0.5 block font-marca uppercase tracking-[0.28em] ${escalaEst} ${
+              negativa ? 'text-menta' : 'text-hoja'
+            }`}
+          >
+            Est. 2024
+          </span>
         </span>
-        <span
-          className={`mt-0.5 block font-marca uppercase tracking-[0.28em] ${escalaEst} ${
-            negativa ? 'text-menta' : 'text-hoja'
-          }`}
-        >
-          Est. 2024
-        </span>
-      </span>
+      )}
     </span>
   );
 }
