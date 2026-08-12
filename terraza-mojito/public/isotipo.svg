@@ -1,61 +1,103 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Terraza Mojito">
   <title>Terraza Mojito</title>
   <!--
-    Isotipo TM-L03 redibujado en vector siguiendo el Manual de Identidad v1.0:
-    sol, hojas de hierbabuena, vaso, hielo, rodaja de limón y popote.
-    Colores exclusivamente de la paleta oficial. Sin degradados (el manual los prohíbe).
-    Orden de dibujo: sol → hojas → popote → vaso → contenido → contorno.
-    NOTA: reconstrucción a partir del PNG de referencia, no el vector maestro.
+    Isotipo redibujado a partir del logotipo original enviado por el cliente.
+
+    Diferencias respecto al manual escrito: el activo real SÍ usa degradados
+    (el sol y el vaso), aunque el manual §7 los prohíbe. Se respeta el activo,
+    que es la marca que el negocio ya usa.
+
+    ESTO SIGUE SIENDO UNA APROXIMACIÓN VECTORIAL. El original es una
+    ilustración con volumen, transparencias y sombreado que no se reproduce
+    con trazos a mano. Para producción, colocar el archivo real en
+    public/logo.png y activarlo en src/components/ui/Logo.tsx.
   -->
   <defs>
-    <!-- Hoja de hierbabuena, punta hacia +X, anclada en el origen -->
-    <g id="tm-hoja">
-      <path d="M0 0C11 -17 32 -20 45 -7 32 9 11 12 0 0Z"/>
-      <path d="M5 -1C17 -4 32 -6 42 -7" fill="none" stroke-width="3.5"/>
+    <linearGradient id="tm-sol" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#8CC63F"/>
+      <stop offset="1" stop-color="#2E7D32"/>
+    </linearGradient>
+    <linearGradient id="tm-liquido" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E8F7D0"/>
+      <stop offset="1" stop-color="#A8D96A"/>
+    </linearGradient>
+    <linearGradient id="tm-hoja" x1="0" y1="-1" x2="1" y2="1">
+      <stop offset="0" stop-color="#4CAF50"/>
+      <stop offset="1" stop-color="#1B5E20"/>
+    </linearGradient>
+    <linearGradient id="tm-popote" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9AA6AD"/>
+      <stop offset="0.45" stop-color="#E4EAEE"/>
+      <stop offset="1" stop-color="#7C8991"/>
+    </linearGradient>
+
+    <!-- Hoja de hierbabuena con nervadura, punta hacia +X -->
+    <g id="tm-hojita">
+      <path d="M0 0C12 -24 44 -30 62 -12 46 10 14 20 0 0Z"
+            fill="url(#tm-hoja)" stroke="#14421A" stroke-width="3.5" stroke-linejoin="round"/>
+      <g fill="none" stroke="#14421A" stroke-width="2.2" stroke-linecap="round" opacity="0.75">
+        <path d="M4 -1C22 -7 46 -11 58 -12"/>
+        <path d="M16 -6 20 -14M30 -9 35 -18M44 -11 48 -19"/>
+        <path d="M14 2 17 9M28 1 32 8M42 -2 45 4"/>
+      </g>
     </g>
-    <!-- El vaso se reutiliza para relleno, recorte y contorno -->
-    <path id="tm-vaso" d="M74 84h52l-6 79a11 11 0 0 1-11 10H91a11 11 0 0 1-11-10Z"/>
+
+    <path id="tm-vaso" d="M71 76h58l-5 84a9 9 0 0 1-9 8H85a9 9 0 0 1-9-8Z"/>
     <clipPath id="tm-dentro"><use href="#tm-vaso"/></clipPath>
   </defs>
 
-  <g stroke="#0A2F0F" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Sol -->
+  <circle cx="100" cy="86" r="52" fill="url(#tm-sol)"/>
 
-    <!-- Sol -->
-    <circle cx="100" cy="56" r="24" fill="#43B33C" stroke="none"/>
-
-    <!-- Hojas: dos por lado, abriéndose hacia arriba desde el borde del vaso -->
-    <g fill="#309830">
-      <g transform="translate(114 86)">
-        <use href="#tm-hoja" transform="rotate(-32)"/>
-        <use href="#tm-hoja" transform="rotate(-17)" fill="#1F6821"/>
-      </g>
-      <g transform="translate(86 86) scale(-1 1)">
-        <use href="#tm-hoja" transform="rotate(-32)"/>
-        <use href="#tm-hoja" transform="rotate(-17)" fill="#1F6821"/>
-      </g>
+  <!-- Hojas: tres por lado, abriéndose desde detrás del vaso -->
+  <g>
+    <g transform="translate(112 92)">
+      <use href="#tm-hojita" transform="rotate(-52) scale(0.82)"/>
+      <use href="#tm-hojita" transform="rotate(-20)"/>
+      <use href="#tm-hojita" transform="rotate(14) scale(0.88)"/>
     </g>
-
-    <!-- Popote -->
-    <path d="M122 54 108 84" stroke-width="10"/>
-    <path d="M122 54 108 84" stroke="#A0E09B" stroke-width="4.5"/>
-
-    <!-- Cuerpo del vaso -->
-    <use href="#tm-vaso" fill="#309830" stroke="none"/>
-
-    <!-- Contenido recortado al interior del vaso: nada se desborda -->
-    <g clip-path="url(#tm-dentro)" stroke-width="4">
-      <rect x="85" y="95" width="20" height="20" rx="5" fill="#A0E09B"/>
-      <rect x="106" y="112" width="16" height="16" rx="5" fill="#A0E09B"/>
-      <g transform="translate(100 146)">
-        <circle r="16" fill="#DDF3B5"/>
-        <circle r="10.5" fill="none" stroke-width="2.5"/>
-        <path d="M0 -10.5V0M0 10.5V0M-10.5 0H0M10.5 0H0M-7.4-7.4 0 0M7.4 7.4 0 0M7.4-7.4 0 0M-7.4 7.4 0 0"
-              stroke-width="2.5"/>
-      </g>
+    <g transform="translate(88 92) scale(-1 1)">
+      <use href="#tm-hojita" transform="rotate(-52) scale(0.82)"/>
+      <use href="#tm-hojita" transform="rotate(-20)"/>
+      <use href="#tm-hojita" transform="rotate(14) scale(0.88)"/>
     </g>
-
-    <!-- Contorno del vaso por encima del contenido -->
-    <use href="#tm-vaso" fill="none" stroke-width="6"/>
-    <path d="M74 84h52" stroke-width="6"/>
   </g>
+
+  <!-- Ramita de hierbabuena asomando del vaso -->
+  <g transform="translate(96 62)">
+    <path d="M0 16V2" stroke="#14421A" stroke-width="3" stroke-linecap="round"/>
+    <path d="M0 4C-4 -5 -15 -7 -20 -2-14 6-4 7 0 4Z" fill="url(#tm-hoja)" stroke="#14421A" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M2 2C5 -8 16 -12 21 -7 16 2 6 5 2 2Z" fill="url(#tm-hoja)" stroke="#14421A" stroke-width="3" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Popote metálico -->
+  <path d="M130 40 112 78" stroke="#3F4A50" stroke-width="10" stroke-linecap="round"/>
+  <path d="M130 40 112 78" stroke="url(#tm-popote)" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Vaso -->
+  <use href="#tm-vaso" fill="url(#tm-liquido)"/>
+
+  <g clip-path="url(#tm-dentro)">
+    <!-- Hielo -->
+    <g fill="#F4FBEA" stroke="#7FB05A" stroke-width="2.5" stroke-linejoin="round" opacity="0.95">
+      <rect x="82" y="88" width="22" height="22" rx="5"/>
+      <rect x="104" y="102" width="18" height="18" rx="4.5"/>
+      <rect x="80" y="112" width="16" height="16" rx="4"/>
+    </g>
+    <!-- Rodaja de limón -->
+    <g transform="translate(101 143)">
+      <circle r="20" fill="#8CC63F" stroke="#2E7D32" stroke-width="3"/>
+      <circle r="16" fill="#F1F9DC"/>
+      <circle r="13.5" fill="#B7DE6B"/>
+      <g stroke="#F1F9DC" stroke-width="2.4" stroke-linecap="round">
+        <path d="M0 -13.5V0M0 13.5V0M-13.5 0H0M13.5 0H0M-9.5-9.5 0 0M9.5 9.5 0 0M9.5-9.5 0 0M-9.5 9.5 0 0"/>
+      </g>
+    </g>
+    <!-- Brillo del cristal -->
+    <path d="M79 80h7v78h-7Z" fill="#FFFFFF" opacity="0.45"/>
+  </g>
+
+  <!-- Contorno del vaso por encima del contenido -->
+  <use href="#tm-vaso" fill="none" stroke="#2E7D32" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M71 76h58" stroke="#2E7D32" stroke-width="5" stroke-linecap="round"/>
 </svg>

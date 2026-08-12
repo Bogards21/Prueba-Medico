@@ -80,7 +80,7 @@ export function Hero() {
               aria-hidden
               className="absolute inset-[6%] rounded-full bg-espuma shadow-card"
             />
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-[14%]">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-[13%]">
               <Image
                 src="/isotipo.svg"
                 alt="Vaso de mojito con hojas de hierbabuena, hielo y rodaja de limón"
@@ -88,11 +88,16 @@ export function Hero() {
                 height={300}
                 priority
                 sizes="(max-width: 1024px) 60vw, 30vw"
-                className="animate-float h-auto w-[62%] max-w-[16rem] object-contain"
+                className="animate-float h-auto w-[60%] max-w-[15rem] object-contain"
               />
-              <p className="display text-center text-[clamp(1.5rem,4.5vw,2.25rem)] leading-[0.9] text-noche">
-                <span className="block">TERRAZA</span>
-                <span className="block">MOJITO</span>
+              <p className="text-center text-noche">
+                <span className="block font-marca text-[clamp(1.5rem,4.4vw,2.25rem)] font-bold leading-[0.95] tracking-[0.02em]">
+                  <span className="block">TERRAZA</span>
+                  <span className="block">MOJITO</span>
+                </span>
+                <span className="mt-2 block font-marca text-[clamp(0.6rem,1.5vw,0.8rem)] uppercase tracking-[0.3em] text-hoja">
+                  Est. 2024
+                </span>
               </p>
             </div>
           </div>

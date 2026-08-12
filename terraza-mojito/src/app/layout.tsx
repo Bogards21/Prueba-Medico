@@ -10,7 +10,7 @@ import './globals.css';
  * ganar unos ms de LCP, cámbialo por next/font/google en este archivo.
  */
 const FUENTES =
-  'https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&family=DM+Sans:wght@500;700&display=swap';
+  'https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&family=DM+Sans:wght@500;700&family=Playfair+Display:wght@700;800&display=swap';
 
 const descripcion =
   'Mojitos frescos, terraza y buena compañía en Metepec. Reserva tu mesa en Terraza Mojito.';

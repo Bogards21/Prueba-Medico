@@ -27,6 +27,8 @@ const config: Config = {
         display: ['var(--font-fredoka)', 'Arial Rounded MT Bold', 'system-ui', 'sans-serif'],
         sans: ['var(--font-nunito)', 'Arial', 'sans-serif'],
         data: ['var(--font-dm-sans)', 'Arial', 'sans-serif'],
+        // Serif del logotipo real (lleva 'EST. 2024' debajo del nombre).
+        marca: ['var(--font-playfair)', 'Georgia', 'serif'],
       },
       borderRadius: {
         sm: '12px',
